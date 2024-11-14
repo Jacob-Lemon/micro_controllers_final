@@ -1,0 +1,13 @@
+# ignore all files
+*
+
+# unignore file types
+!*.c
+!*.h
+!*.s
+
+# should unignore README.md
+!*.md
+!.gitignore
+
+
