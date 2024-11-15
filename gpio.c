@@ -3,18 +3,10 @@
 #include "stm32l476xx.h"
 
 
-#define OUTPUT 1
-#define INPUT 0
-
-#define PUSHPULL 0
-#define OPENDRAIN 1
-
-#define NONE 0
-#define PULLUP 1
-#define PULLDOWN 2
 
 void pinMode(GPIO_TypeDef *port, int pin, int mode) {
     //port->MODER = ...................
+		port->MODER &= (mode << (pin*2));
 }
 
 void setOutputType(GPIO_TypeDef *port, int pin, int type) {
