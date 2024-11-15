@@ -11,6 +11,7 @@ outputs:
     none
 example call:
     pin_mode(GPIOA, 5, 1); // Configures PA5 as output mode
+		pin_mode(GPIOA, 5, OUTPUT); // output is defined as a macro to be 1
 ******************************************************************************/
 void set_pin_mode(GPIO_TypeDef *port, int pin, int mode) {
     port->MODER &= ~(0b11 << (pin * 2)); // Clear the 2 bits for the pin
