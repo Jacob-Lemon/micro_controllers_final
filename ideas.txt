@@ -1,3 +1,102 @@
-Overall Idea:
+Overall Idea: Connect 6 Split flap displays all together to display any 6 letter string wanted
 
-Connect 6 Split flap displays all together
+
+Mechanical and Pinout information:
+    Each display consists of:
+        - 3D printed parts (2 case pieces, 36 flaps)
+        - Stickers of A-Z, 0-9 where '0' and 'O' are the same
+        - 1 bolt for axle
+        - 1 bolt and nut for flap stopper
+        - 1 motor to drive the flap spool
+        - 1 Hall effect sensor to detect rotational position
+
+
+    There are not enough pins to drive all motors and sensors from the micro controller, 
+    so we can use 74HC595 shift registers to control the motors.
+
+    Pins connected to the Microcontroller per shift register:
+        - DS: the serial data to input to the register
+        - SHCP: the clock needed to shift serial inputs to register
+        - STCP: Driven high whenever 8 bit output is wanted
+
+    Total Microcontroller pins needed:
+        - 9 at most for all 3 shift registers (2 registers per motor), (could save by sending DS and SHCP to all registers)
+        - 6 for the hall effect sensors (output a 0 when a magnet is detected, might need to set pull up behavior on GPIO)
+        - 8 for the keypad for completeness
+    
+    Breadboard Information:
+        - 6V external power supply to power motors and shift registers
+        - 5V or 3.3V power supply from Microcontroller for hall effect sensors
+        - Register ties: OE to ground, and MR to ground possibly
+        - Shift registers are the only components connected to breadboard besides power supply and duponts
+
+
+Code Information:
+    Overall:
+        Drive the shift registers with specific data to turn the motors to specific positions
+
+    Reset Behavior:
+        The spool will rotate until the magnet is detected, then it will rotate a specific amount to get to 
+        a 'default' position, which will be the blank space
+
+        It could be nice to have an init() or reset() function that takes care of this completely:
+            Rotate all motors until a magnet is detected
+            if sensor 1 detects a magnet, then rotate motor 1 <x> amount of degrees, effect
+        
+    Possible Motor Functions: (theoretically 10 degrees per split flap character)
+
+        void split_display('6string'); would display whatever 6 character string given, with edge cases handled
+
+        void motor_rotate(int degrees); would rotate a specific amount of degrees
+
+        void motor_rotate('A'); rotates to a specific character
+
+        Currently Have:
+
+        void step_motor_clockwise(int steps); moves desired number of steps, !!CURRENTLY ONLY FOR PB4-7!!
+
+
+    Motor Functions will use these possible Shift Register functions:
+
+        void register_step_motor(int motor_id); does one step for a specific motor
+
+        void register_move_motor_degrees(int motor_id, int degrees); moves a motor a specified number of degrees
+
+        void register_put_serial_data(int register_id, char data); takes in 8 bits and puts it on a specific register
+
+        void output_register_data(int register_id); pulses STCP high for one clock cycle to a specific register
+
+
+    Lookup table for character and associated degrees:
+
+        Enter in a character or ' ' and it returns the degrees of where it is on the spool
+
+        int lookupDegree(char input) {
+            // Handle blank space
+            if (input == ' ') {
+                return 0;
+            }
+
+            // Handle numeric characters ('0' to '9')
+            if (input >= '0' && input <= '9') {
+                return (input - '0' + 1) * 10;
+            }
+
+            // Handle alphabetic characters ('A' to 'Z')
+            if (input >= 'A' && input <= 'Z') {
+                int baseDegrees = 110; // Starting degrees for 'A'
+
+                // Skip 'O' between 'N' and 'P'
+                if (input >= 'P') {
+                    return baseDegrees + (input - 'A' - 1) * 10;
+                } else {
+                    return baseDegrees + (input - 'A') * 10;
+                }
+            }
+
+            // Default case: invalid input
+            return -1; // Return an error value, probably don't need if we are good
+        }
+
+
+
