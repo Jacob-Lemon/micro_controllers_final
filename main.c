@@ -6,8 +6,12 @@
 #include "gpio.h"
 
 /******************************************************************************
-* main.c
-* this is a comment
+main.c
+on register ids:
+	an int. 0,1,2
+
+
+
 ******************************************************************************/
 
 
@@ -25,3 +29,57 @@ int main(void){
 	
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+pin layout
+
+9 for shift registers - PB
+3
+	serial data
+	SHCP
+	STCP
+	reg0:
+		PB0 - data0
+		PB1 - SHCP0
+		PB2 - STCP0
+	reg1:
+		PB3 - data1
+		PB4 - SHCP1
+		PB4 - STCP1
+
+
+
+6 for all hall effect sensors - PC
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+

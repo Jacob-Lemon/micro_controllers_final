@@ -127,26 +127,6 @@ data 2
 
 */
 
-/*
-single shift register specs
-needs power and ground
-inputs:
-	serial data input
-	shift register clock
-	storage register clock
-	output enable - doesn't need a pin, just goes straight to ground
-	
-outputs:
-	8 parallel data bits
-	
-usage for our purposes
-output enable will be held to a constant logic zero
-	this will mean that output is updated and instantly pushed out upon positive edge of STCP (storage register clock)
-	
-0100_0100
-0010_0010
-
-*/
 
 
 
