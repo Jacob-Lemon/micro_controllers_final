@@ -51,11 +51,12 @@ int main(void){
 /*
 pin layout
 
-9 for shift registers - PB
-3
+9 for shift registers - PB0-8
+3 for each:
 	serial data
 	SHCP
 	STCP
+
 	reg0:
 		PB0 - data0
 		PB1 - SHCP0
@@ -63,11 +64,36 @@ pin layout
 	reg1:
 		PB3 - data1
 		PB4 - SHCP1
-		PB4 - STCP1
+		PB5 - STCP1
+	reg2:
+		PB6 - data2
+		PB7 - SHCP2
+		PB8 - STCP2
 
 
 
-6 for all hall effect sensors - PC
+6 for all hall effect sensors - PC0-7
+1 for each display:
+	magnet_detected
+
+	Hall 0:
+		PC0
+	Hall 1;
+		PC1
+	Hall 2:
+		PC2
+	Hall 3:
+		PC3
+	Hall 4;
+		PC4
+	Hall 5:
+		PC5
+	Hall 6:
+		PC6
+	Hall 7;
+		PC7
+
+
 
 
 
