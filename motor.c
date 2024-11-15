@@ -1,6 +1,8 @@
 #include "motor.h"
 #include "stm32l476xx.h"
 #include "delay.h"
+#include "gpio.h"
+
 
 #define steps_multiplier 34 // used to be 34
 // 45 makes it go slightly more than 5 seconds
@@ -12,19 +14,26 @@ void init_motor() {
 	// for now, lets use Pins PB 4-7
 	// set pins to output mode - 01 is output, 00 is input
 	// 0101_0101 = 55
-	GPIOB->MODER &= 0xFFFF55FF;
-	GPIOB->MODER |= 0x00005500;
+	
+	// old way
+	// GPIOB->MODER &= 0xFFFF55FF;
+	// GPIOB->MODER |= 0x00005500;
 	// I don't think we need to modify the output type or any PUPDR
 	
+	
+	/* new way */
+	// set_pin_mode(GPIOB, 4, OUTPUT);
+	// set_pin_mode(GPIOB, 5, OUTPUT);
+	// set_pin_mode(GPIOB, 6, OUTPUT);
+	// set_pin_mode(GPIOB, 7, OUTPUT);
+	
+	for (int pin=4; pin<=7; pin++) {
+		set_pin_mode(GPIOB, pin, OUTPUT); // sets PB4-7 to output mode 
+	}
 	
 	// this should be sufficient to initialize the motor GPIO pins
 }
 
-
-/*
-cw means clockwise
-ccw means counter-clockwise
-*/
 
 // unsigned char steps[] = {0x0A, 0x09, 0x05, 0x06};
 // dr phillips way

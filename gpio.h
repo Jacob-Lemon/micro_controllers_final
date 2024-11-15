@@ -18,7 +18,7 @@
 #define PULLDOWN 2
 
 //----- Function Prototypes -----
-void pin_mode(GPIO_TypeDef *port, int pin, int mode);
+void set_pin_mode(GPIO_TypeDef *port, int pin, int mode);
 void set_output_type(GPIO_TypeDef *port, int pin, int type);
 void set_pull_up_down(GPIO_TypeDef *port, int pin, int pupd);
 void digital_write(GPIO_TypeDef *port, int pin, int value);

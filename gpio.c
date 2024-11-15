@@ -2,7 +2,7 @@
 #include "stm32l476xx.h"
 
 /******************************************************************************
-pin_mode will set the mode for a GPIO pin, like PA12.
+set_pin_mode will set the mode for a GPIO pin, like PA12.
 inputs:
     pointer to a GPIO typedef
     int - pin number
@@ -12,7 +12,7 @@ outputs:
 example call:
     pin_mode(GPIOA, 5, 1); // Configures PA5 as output mode
 ******************************************************************************/
-void pin_mode(GPIO_TypeDef *port, int pin, int mode) {
+void set_pin_mode(GPIO_TypeDef *port, int pin, int mode) {
     port->MODER &= ~(0b11 << (pin * 2)); // Clear the 2 bits for the pin
     port->MODER |= (mode << (pin * 2));  // Set the mode for the pin
 }
