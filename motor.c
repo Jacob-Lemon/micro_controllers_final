@@ -63,9 +63,8 @@ ODR gets
 unsigned char step_array[] = {0x80, 0x40, 0x20, 0x10}; // normal way. original way!
 
 unsigned int step_idx = 0;
-// step_idx = (step_idx + 1) % 4;
 
-void step_motor_clockwise(int steps) { // this may be ccw not cw
+void step_motor_clockwise(int steps) {
 	steps *= steps_multiplier; // 34 right now
 	//double loops = steps*steps_multiplier;
 	
@@ -77,7 +76,8 @@ void step_motor_clockwise(int steps) { // this may be ccw not cw
 		// assign output
 		GPIOB->ODR &= step_array[step_idx];
 		GPIOB->ODR |= step_array[step_idx]; // this should work? because it is PB4-7
-		delay_ms(1);
+		// delay_ms(1);
+		delay_us(500);
 	}
 }
 
@@ -103,8 +103,41 @@ void step_motor_counterclockwise(int steps) {
 
 
 
+/*
+shift register reqs
+power and ground
+Q0-Q7 which are parallel outputs
+
+6 total pins for everything
+data 0
+data 1
+data 2
 
 
+
+
+*/
+
+/*
+single shift register specs
+needs power and ground
+inputs:
+	serial data input
+	shift register clock
+	storage register clock
+	output enable - doesn't need a pin, just goes straight to ground
+	
+outputs:
+	8 parallel data bits
+	
+usage for our purposes
+output enable will be held to a constant logic zero
+	this will mean that output is updated and instantly pushed out upon positive edge of STCP (storage register clock)
+	
+0100_0100
+0010_0010
+
+*/
 
 
 
