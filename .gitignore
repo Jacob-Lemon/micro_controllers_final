@@ -5,6 +5,7 @@
 !*.c
 !*.h
 !*.s
+!*.txt
 
 # should unignore README.md
 !*.md
