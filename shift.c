@@ -1,5 +1,5 @@
 #include "shift.h"
-
+#include "gpio.h"
 
 
 
@@ -28,37 +28,55 @@ pseudocode:
 	enable output
 	disable output // here, we disable immediately because we only need the positive edge of the clock
 example call:
-	register_put_serial_data(,)
+	register_put_serial_data(0,0b00000000); // writes 00000000 to shift register 0
 ******************************************************************************/
-void register_put_serial_data(int register_id, char data) {
+void register_put_serial_data(int register_id, unsigned char data) {
 	for (int i=0; i<8; i++) {
+		// get the current bit we want to serial output
+		int serial_bit = (data >> (7 - i));
+		
 		
 		// assign serial output
 		switch (register_id) {
 			case 0: {
 				// assign output
-				
+				digital_write(DATA_0_PORT, DATA_0_PIN, serial_bit); // write the data bit
+				digital_write(SHCP_0_PORT, SHCP_0_PIN, 0); 					// shift clock goes low
+				digital_write(SHCP_0_PORT, SHCP_0_PIN, 1); 					// shift clock goes high
 			} break;
 			
 			case 1: {
 				// assign output
+				digital_write(DATA_1_PORT, DATA_1_PIN, serial_bit); // write the data bit
+				digital_write(SHCP_1_PORT, SHCP_1_PIN, 0); 					// shift clock goes low
+				digital_write(SHCP_1_PORT, SHCP_1_PIN, 1); 					// shift clock goes high
 			} break;
 			
 			case 2: {
 				// assign output
+				digital_write(DATA_2_PORT, DATA_2_PIN, serial_bit); // write the data bit
+				digital_write(SHCP_2_PORT, SHCP_2_PIN, 0); 					// shift clock goes low
+				digital_write(SHCP_2_PORT, SHCP_2_PIN, 1); 					// shift clock goes high
 			} break;
-		}
-		
-		// pulse clock
-		
-		
-		
-		
-		
-		// shift the register by pulsing the clock
-		
-		// output the serial data
-	}
+		} // end switch
+	} // end loop
+	// now, the shift register has the right data,
+	// so we enable the storage clock to set the output
+	// trigger positive edge of STCP
+	switch (register_id) {
+		case 0: {
+			digital_write(STCP_0_PORT, STCP_0_PIN, 0); // clock goes low
+			digital_write(STCP_0_PORT, STCP_0_PIN, 1); // clock goes high
+		} break;
+		case 1: {
+			digital_write(STCP_1_PORT, STCP_1_PIN, 0); // clock goes low
+			digital_write(STCP_1_PORT, STCP_1_PIN, 1); // clock goes high
+		} break;
+		case 2: {
+			digital_write(STCP_2_PORT, STCP_2_PIN, 0); // clock goes low
+			digital_write(STCP_2_PORT, STCP_2_PIN, 1); // clock goes high
+		} break;
+	} // end switch
 }
 
 
