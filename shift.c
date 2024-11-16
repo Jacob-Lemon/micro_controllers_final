@@ -5,7 +5,16 @@
 
 
 
+/******************************************************************************
+register_step_motor will cause the motor of the motor_id to step once.
 
+
+I am envisioning a nibble the corresponds to each motor. We then take that
+nibble, shift just it, and concatenate it with the other thing.
+This
+
+
+******************************************************************************/
 void register_step_motor(int motor_id) {
 	
 }
@@ -28,7 +37,8 @@ pseudocode:
 	enable output
 	disable output // here, we disable immediately because we only need the positive edge of the clock
 example call:
-	register_put_serial_data(0,0b00000000); // writes 00000000 to shift register 0
+	// writes 00000000 to shift register 0
+	register_put_serial_data(0,0b00000000);
 ******************************************************************************/
 void register_put_serial_data(int register_id, unsigned char data) {
 	for (int i=0; i<8; i++) {
