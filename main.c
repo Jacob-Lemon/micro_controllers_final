@@ -22,8 +22,9 @@ int main(void){
 	
 	init_motor();
 	
-	for (int i = 0; i<25; i++) {
+	for (int i = 0; i<80; i++) {
 		step_motor_clockwise(1);
+		// step_motor_counterclockwise(1);
 		// delay_ms(200);
 	}
 	

@@ -4,31 +4,20 @@
 #include "gpio.h"
 
 
-#define steps_multiplier 34 // used to be 34
-// 45 makes it go slightly more than 5 seconds
+#define steps_multiplier 57 // I beleive 57 is Easton's calculated value
 
 void init_motor() {
 	// Make sure GPIO clock B is enabled
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN; // enable GPIO clock B
-	
-	// for now, lets use Pins PB 4-7
-	// set pins to output mode - 01 is output, 00 is input
-	// 0101_0101 = 55
-	
-	// old way
-	// GPIOB->MODER &= 0xFFFF55FF;
-	// GPIOB->MODER |= 0x00005500;
-	// I don't think we need to modify the output type or any PUPDR
-	
-	
-	/* new way */
-	// set_pin_mode(GPIOB, 4, OUTPUT);
-	// set_pin_mode(GPIOB, 5, OUTPUT);
-	// set_pin_mode(GPIOB, 6, OUTPUT);
-	// set_pin_mode(GPIOB, 7, OUTPUT);
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN; // enable GPIO clock C
+
 	
 	for (int pin=4; pin<=7; pin++) {
 		set_pin_mode(GPIOB, pin, OUTPUT); // sets PB4-7 to output mode 
+	}
+	
+	for (int pin=0; pin <=3; pin++) {
+		set_pin_mode(GPIOC, pin, OUTPUT); // sets PC0-3 to output mode
 	}
 	
 	// this should be sufficient to initialize the motor GPIO pins
@@ -79,14 +68,19 @@ void step_motor_clockwise(int steps) {
 	
 	// step_idx = 0;
 	
-	for (int i=0; i < (steps + 34); i ++) {
+	for (int i=0; i < (steps); i++) {
 		// increase step
 		step_idx = (step_idx + 1) % 4;
 		// assign output
 		GPIOB->ODR &= step_array[step_idx];
 		GPIOB->ODR |= step_array[step_idx]; // this should work? because it is PB4-7
+		
+		GPIOC->ODR &= (step_array[step_idx] >> 4);
+		GPIOC->ODR |= (step_array[step_idx] >> 4); // this is hardcoded to output to GPIOC PC0-3
+		
+		
 		// delay_ms(1);
-		delay_us(500);
+		delay_us(420);
 	}
 }
 
@@ -105,6 +99,12 @@ void step_motor_counterclockwise(int steps) {
 		// assign output
 		GPIOB->ODR &= step_array[step_idx];
 		GPIOB->ODR |= step_array[step_idx]; // this should work? because it is PB4-7
+		
+		
+		GPIOC->ODR &= (step_array[step_idx] >> 4);
+		GPIOC->ODR |= (step_array[step_idx] >> 4); // this is hardcoded to output to GPIOC PC0-3
+
+		
 		delay_ms(1);
 	}
 
