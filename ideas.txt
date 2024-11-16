@@ -109,35 +109,39 @@ Random:
 
     Half step angle:
 
-        \frac{5.625}{64} = 0.087890625
+        5.625 / 64 = 0.087890625
 
     Degrees per 36 flaps:
 
-        \frac{360}{36} = 10
+        360 / 36 = 10
 
-    Which means moving 10 degrees is:
+    Which means moving 10 degrees is solving:
 
-        solving: \frac{5.625}{64}\ \cdot\ 2x\ =\ 10\ 
+        (5.625 / 64) * 2x = 10  // 2x since it is half stepping in docs
 
-        \frac{10}{\frac{5.625}{64}\cdot2} = 56.88888889, so 57 steps
+        so 10 / ((5.625 / 64) * 2) = 56.88888889, so 57 steps
 
-        we'd use this by doing steps *= steps_multiplier; like before.
-    
-    The problem is that doing 10 steps over and over again introduces errors
-    For example doing 36, 10 degree rotations gives:
+    We'd use this by doing steps *= steps_multiplier; like before, with steps_multiplier = 57.
 
-        \left(\frac{5.625}{64}\ \cdot\ 57\ \cdot\ 2\right)\ \cdot\ \left(36\ \cdot\ k\right) = 360.703125 degrees,
-        which is .703 degrees, this will be fine for 1 rotation, but after 2 rotations it is 1 degree off. Which means
-        after only 6 total spool rotations the wrong letter will be displayed.
-        
-        But we can correct that by determining whenever we pass the Z character and correct the degree angle:
+    The problem is that doing 10 steps over and over again introduces errors.  
+    For example, doing 36, 10-degree rotations gives:
 
-        Luckily it works out perfectly!!
+        ((5.625 / 64) * 57 * 2) * (36 * k) = 360.703125 degrees
 
-        \frac{.703125}{0.087890625\ \cdot\ 2} = 4, exactly and evenly 4!
+    Which is .703 degrees off a perfect rotation, this will be fine enough for 1 rotation, 
+    but after 2 rotations it is 1 degree off. Which means after only 6 total spool rotations 
+    the wrong letter will be displayed.
+
+    But we can correct that by determining whenever we pass the Z character and correct the degree angle:
+
+    Luckily, it works out perfectly!
+
+        0.703125 / (0.087890625 * 2) = 4, exactly and evenly 4!
+
 
     Which means that whenever we pass the Z character we can just subtract 4 from the total steps like this:
 
+        // example
         int Z_is_passed = Z_is_passed('U', ' '); // U flap to blank flap will pass Z, so it will be true
         if (Z_is_passed) {
             steps *= steps_multiplier - 4;
