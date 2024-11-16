@@ -67,6 +67,11 @@ Code Information:
         void output_register_data(int register_id); pulses STCP high for one clock cycle to a specific register
 
 
+    Hall Effect Sensor Functions:
+
+        mag_detected_true = !digital_read(...); reads what the value of magnet detection is, TRUE could be magnet detected?
+
+
     Lookup table for character and associated degrees:
 
         Enter in a character or ' ' and it returns the degrees of where it is on the spool
@@ -98,5 +103,99 @@ Code Information:
             return -1; // Return an error value, probably don't need if we are good
         }
 
+
+Random:
+    Solution for stepper motor error:
+
+    Half step angle:
+
+        \frac{5.625}{64} = 0.087890625
+
+    Degrees per 36 flaps:
+
+        \frac{360}{36} = 10
+
+    Which means moving 10 degrees is:
+
+        solving: \frac{5.625}{64}\ \cdot\ 2x\ =\ 10\ 
+
+        \frac{10}{\frac{5.625}{64}\cdot2} = 56.88888889, so 57 steps
+
+        we'd use this by doing steps *= steps_multiplier; like before.
+    
+    The problem is that doing 10 steps over and over again introduces errors
+    For example doing 36, 10 degree rotations gives:
+
+        \left(\frac{5.625}{64}\ \cdot\ 57\ \cdot\ 2\right)\ \cdot\ \left(36\ \cdot\ k\right) = 360.703125 degrees,
+        which is .703 degrees, this will be fine for 1 rotation, but after 2 rotations it is 1 degree off. Which means
+        after only 6 total spool rotations the wrong letter will be displayed.
+        
+        But we can correct that by determining whenever we pass the Z character and correct the degree angle:
+
+        Luckily it works out perfectly!!
+
+        \frac{.703125}{0.087890625\ \cdot\ 2} = 4, exactly and evenly 4!
+
+    Which means that whenever we pass the Z character we can just subtract 4 from the total steps like this:
+
+        int Z_is_passed = Z_is_passed('U', ' '); // U flap to blank flap will pass Z, so it will be true
+        if (Z_is_passed) {
+            steps *= steps_multiplier - 4;
+        }
+        else {
+            steps *= steps_multiplier;
+        }
+
+        which will always give us an exact 360 degree angle mathematically/theoretically, so we will only have to
+        callibrate the position in the beginning theoretically and no error over time will be introduced
+
+    Desmos demonstration:
+
+        k\ =\ 1
+
+        no correction:
+            \left(\left(\frac{5.625}{64}\ \cdot\ 57\ \cdot\ 2\right)\ \cdot\ \left(36\ \cdot\ k\right)\right)\ -\ \left(360\ \cdot\ \left(k-1\right)\right)
+
+        with correction:
+            \left(\left(\left(\frac{5.625}{64}\ \cdot\ 57\ \cdot\ 2\right)\ \cdot\ \left(35\ \cdot\ k\right)\right)\ +\ \left(\left(\frac{5.625}{64}\ \cdot\ \left(57\ -\ 4\right)\ \cdot\ 2\right)\ \cdot\ \left(k\right)\right)\right)\ -\ \left(360\ \cdot\ \left(k-1\right)\right)\ 
+
+    Detecting if Z is passed:
+
+        I imagine it is fairly simple, just checking indices to see if Z was passed:
+
+            // order of flaps
+            const char flap_order[] = " 0123456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
+
+            // need to protect against bad input?
+            // returns which flap number a given character is
+            int getIndex(char flap_char) {
+                // find the index of the character
+                for (int i = 0; i < 36; i++) {
+                    if (flap_order[i] == flap_char) {
+                        return i;
+                    }
+                }
+            }
+
+            // returns 1 if z will be passed, and 0 if not
+            int Z_is_passed(char current, char next) {
+                int current_index = getIndex(current);
+                int next_index = getIndex(next);
+                int ZIndex = 35;
+                
+                // Check if we pass through Z 
+                                // full normal pass through Z                      edge case
+                if ((next_index <= current_index && next_index < ZIndex) || (current_index == ZIndex)) {
+                    return 1; // true
+                }
+                return 0; // false
+            }
+
+        
+
+
+
+
+    
 
 

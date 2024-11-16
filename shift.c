@@ -2,7 +2,7 @@
 #include "gpio.h"
 
 
-
+#define steps_multiplier 57 // (10 / 0.087890625) / 2 = 56.88888889 for 10 degrees
 
 
 /******************************************************************************
@@ -15,12 +15,39 @@ This
 
 
 ******************************************************************************/
-void register_step_motor(int motor_id) {
+void register_step_motor(int motor_id, int steps) {  //do we need the step level? maybe for more precision?
 	
 }
 
+// motor id is 0 - 5
 void register_move_motor_degrees(int motor_id, int degrees) {
-	
+
+	//assign steps to move here
+
+	switch (motor_id) {
+			case 0: {
+								
+			} break;
+			
+			case 1: {
+				
+			} break;
+			
+			case 2: {
+				
+			} break;
+			case 3: {
+				
+			} break;
+			
+			case 4: {
+				
+			} break;
+			
+			case 5: {
+				
+			} break;
+		} // end switch
 }
 
 
