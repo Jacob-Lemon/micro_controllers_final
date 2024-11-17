@@ -195,7 +195,60 @@ Random:
                 return 0; // false
             }
 
+
+Fixing the problem of multiple not moving at once:
+
+    I think that the register_step_motor_once function has the capability for multiple motor movement, the
+    move_to_flap function needs more consideration.
+
+    Maybe we pass an array into it that contains information on which motors need to move. like motor_needs_to_rotate[6]
+
+    for (int i = 0; i < biggest_flap_change; i++) {
+        if (i < flap_distance_in_steps[0])
+            register_step_motor_once(0)
+
+        if (i < flap_distance_in_steps[1])
+            register_step_motor_once(1)
+
+        if (i < flap_distance_in_steps[2])
+            register_step_motor_once(2)
+
+        if (i < flap_distance_in_steps[3])
+            register_step_motor_once(3)
+
+        if (i < flap_distance_in_steps[4])
+            register_step_motor_once(4)
+
+        if (i < flap_distance_in_steps[5])
+            register_step_motor_once(5)
+    }
+
+    revising slightly:
+
+    int biggest_flap_change = 0;
+    for (int i = 0; i < 6; i++) {
+        if (flap_distance_in_steps[i] > biggest_flap_change) {
+            biggest_flap_change = flap_distance_in_steps[i];
+        }
+    }
+
+    //for loop to do steps for all motors that need to move
+    for (int i = 0; i < biggest_flap_change; i++) {   //max amount of motor rotations
+        for (int motor_id = 0; motor_id < 6; motor_id++) {  //go through each motor, same as long if statements above
+            if (motor_rotate[motor_id] == 1 && i < flap_distance_in_steps[motor_id]) { //only do ones that have to rotate
+                register_step_motor_once(motor_id); // Move motor if it still needs steps
+            }
+        }
+    }
+
+
+    new function def would be
+
+        void move_to_flap(int motor_rotate[6], char next_flap);
         
+    except have to keep track of next_flap as well.
+
+        void move_to_flap(int motor_rotate[], unsigned char next_flaps[6]);
 
 
 

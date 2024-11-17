@@ -122,6 +122,13 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 	
 }
 
+//steps meaning a full step in this function, might not be able to use this
+void register_step_motor_multiple(int motor_id, int steps) {
+	for (int i = 0; i < steps; i++) {
+		register_step_motor_once(int motor_id)
+	}
+}
+
 // motor id is 0 - 5
 // void register_move_motor_ten_degrees(int motor_id) {
 // 	int steps = 

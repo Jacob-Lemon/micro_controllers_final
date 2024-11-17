@@ -20,12 +20,7 @@ int motor_orientation_5 = 0;
 /*
 what each motor is currently displaying
 */
-unsigned char current_char_0 = ' '; // initialized to be blank
-unsigned char current_char_1 = ' ';
-unsigned char current_char_2 = ' ';
-unsigned char current_char_3 = ' ';
-unsigned char current_char_4 = ' ';
-unsigned char current_char_5 = ' ';
+unsigned char current_flap[6] = {' ', ' ', ' ', ' ', ' ', ' '}; //changed to be an array for better looking code
 
 
 
