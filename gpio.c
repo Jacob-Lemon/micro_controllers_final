@@ -1,5 +1,6 @@
 #include "gpio.h"
 #include "stm32l476xx.h"
+#include "global_variables.h"
 
 /******************************************************************************
 set_pin_mode will set the mode for a GPIO pin, like PA12.

@@ -2,7 +2,7 @@
 #include "stm32l476xx.h"
 #include "delay.h"
 #include "gpio.h"
-
+#include "global_variables.h"
 
 #define steps_multiplier 57 // I beleive 57 is Easton's calculated value
 

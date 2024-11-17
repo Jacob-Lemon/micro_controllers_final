@@ -4,7 +4,7 @@
 
 // function prototypes
 
-void register_step_motor(int motor_id, int steps); // does one step for a specific motor
+void register_step_motor_once(int motor_id); // does one step for a specific motor
 
 void register_move_motor_degrees(int motor_id, int degrees); // moves a motor a specified number of degrees
 

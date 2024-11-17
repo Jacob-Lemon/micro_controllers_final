@@ -4,6 +4,7 @@
 #include "motor.h"
 #include "delay.h"
 #include "gpio.h"
+#include "global_variables.h"
 
 /******************************************************************************
 main.c
@@ -15,12 +16,15 @@ on register ids:
 ******************************************************************************/
 
 
+
+
 int main(void){
 	// initializations
 	// init_uart();
 	// init_adc();
 	
 	init_motor();
+	
 	
 	for (int i = 0; i<80; i++) {
 		step_motor_clockwise(1);

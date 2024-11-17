@@ -1,6 +1,6 @@
 #include "shift.h"
 #include "gpio.h"
-
+#include "global_variables.h"
 
 #define steps_multiplier 57 // (10 / 0.087890625) / 2 = 56.88888889 for 10 degrees
 
@@ -15,7 +15,41 @@ This
 
 
 ******************************************************************************/
-void register_step_motor(int motor_id, int steps) {  //do we need the step level? maybe for more precision?
+void register_step_motor_once(int motor_id) {  //do we need the step level? maybe for more precision?
+	// increase motor_id orientation
+	// write a switch statement
+	switch (motor_id) {
+			case 0: {
+				
+			} break;
+			
+			case 1: {
+				
+			} break;
+			
+			case 2: {
+				
+			} break;
+			case 3: {
+				
+			} break;
+			
+			case 4: {
+				
+			} break;
+			
+			case 5: {
+				
+			} break;
+		} // end switch
+	
+	// assign output
+		
+	// create character by concatenation { index[motor_orientation_0], index[motor_orientation_1]);
+	
+	//
+	
+	
 	
 }
 
