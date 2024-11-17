@@ -3,6 +3,13 @@
 #include "global_variables.h"
 
 #define steps_multiplier 57 // (10 / 0.087890625) / 2 = 56.88888889 for 10 degrees
+unsigned char step_index[] = {0x08, 0x04, 0x02, 0x01}; //switched from motor.c since 4-7 layout isn't needed
+unsigned char motor_0_nibble = step_index[motor_orientation_0];
+unsigned char motor_1_nibble = step_index[motor_orientation_1];
+unsigned char motor_2_nibble = step_index[motor_orientation_2];
+unsigned char motor_3_nibble = step_index[motor_orientation_3];
+unsigned char motor_4_nibble = step_index[motor_orientation_4];
+unsigned char motor_5_nibble = step_index[motor_orientation_5];
 
 
 /******************************************************************************
@@ -17,35 +24,97 @@ This
 ******************************************************************************/
 void register_step_motor_once(int motor_id) {  //do we need the step level? maybe for more precision?
 	// increase motor_id orientation
+	unsigned char data_to_register = 0;
 	// write a switch statement
 	switch (motor_id) {
-			case 0: {
-				
-			} break;
-			
-			case 1: {
-				
-			} break;
-			
-			case 2: {
-				
-			} break;
-			case 3: {
-				
-			} break;
-			
-			case 4: {
-				
-			} break;
-			
-			case 5: {
-				
-			} break;
-		} // end switch
+		case 0: {
+			// increase motor_id orientation
+			motor_orientation_0 += 1;
+			//motor_orientation reset behavior for array indexing
+			if (motor_orientation_0 > 3) {
+				motor_orientation_0 = 0;
+			}
+			// update the nibble
+			motor_0_nibble = step_index[motor_orientation_0];
+			//motor 0 is higher 4 bits, motor 1 is lower 4 bits for register 0
+			data_to_register = (motor_0_nibble << 4) | motor_1_nibble;
+			register_put_serial_data(0, data_to_register)
+		} break;
+		
+		case 1: {
+			// increase motor_id orientation
+			motor_orientation_1 += 1;
+			//motor_orientation reset behavior for array indexing
+			if (motor_orientation_1 > 3) {
+				motor_orientation_1 = 0;
+			}
+			// update the nibble
+			motor_1_nibble = step_index[motor_orientation_1];
+			//motor 0 is higher 4 bits, motor 1 is lower 4 bits for register 0
+			data_to_register = (motor_0_nibble << 4) | motor_1_nibble;
+			register_put_serial_data(0, data_to_register)
+		} break;
+		
+		case 2: {
+			// increase motor_id orientation
+			motor_orientation_2 += 1;
+			//motor_orientation reset behavior for array indexing
+			if (motor_orientation_2 > 3) {
+				motor_orientation_2 = 0;
+			}
+			// update the nibble
+			motor_2_nibble = step_index[motor_orientation_2];
+			//motor 2 is higher 4 bits, motor 3 is lower 4 bits for register 1
+			data_to_register = (motor_2_nibble << 4) | motor_3_nibble;
+			register_put_serial_data(1, data_to_register)
+		} break;
+
+		case 3: {
+			// increase motor_id orientation
+			motor_orientation_3 += 1;
+			//motor_orientation reset behavior for array indexing
+			if (motor_orientation_3 > 3) {
+				motor_orientation_3 = 0;
+			}
+			// update the nibble
+			motor_3_nibble = step_index[motor_orientation_3];
+			//motor 2 is higher 4 bits, motor 3 is lower 4 bits for register 1
+			data_to_register = (motor_2_nibble << 4) | motor_3_nibble;
+			register_put_serial_data(1, data_to_register)
+		} break;
+		
+		case 4: {
+			// increase motor_id orientation
+			motor_orientation_4 += 1;
+			//motor_orientation reset behavior for array indexing
+			if (motor_orientation_4 > 3) {
+				motor_orientation_4 = 0;
+			}
+			// update the nibble
+			motor_4_nibble = step_index[motor_orientation_4];
+			//motor 4 is higher 4 bits, motor 5 is lower 4 bits for register 1
+			data_to_register = (motor_4_nibble << 4) | motor_5_nibble;
+			register_put_serial_data(2, data_to_register)
+		} break;
+		
+		case 5: {
+			// increase motor_id orientation
+			motor_orientation_5 += 1;
+			//motor_orientation reset behavior for array indexing
+			if (motor_orientation_5 > 3) {
+				motor_orientation_5 = 0;
+			}
+			// update the nibble
+			motor_5_nibble = step_index[motor_orientation_5];
+			//motor 4 is higher 4 bits, motor 5 is lower 4 bits for register 1
+			data_to_register = (motor_4_nibble << 4) | motor_5_nibble;
+			register_put_serial_data(2, data_to_register)
+		} break;
+	} // end switch
 	
 	// assign output
 		
-	// create character by concatenation { index[motor_orientation_0], index[motor_orientation_1]);
+	// create character by concatenation { index[motor_orientation_0], index[motor_orientation_1]};
 	
 	//
 	
@@ -54,35 +123,35 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 }
 
 // motor id is 0 - 5
-void register_move_motor_degrees(int motor_id, int degrees) {
+// void register_move_motor_ten_degrees(int motor_id) {
+// 	int steps = 
+// 	//assign steps to move here
 
-	//assign steps to move here
-
-	switch (motor_id) {
-			case 0: {
-								
-			} break;
+// 	switch (motor_id) {
+// 		case 0: {
+					
+// 		} break;
+		
+// 		case 1: {
 			
-			case 1: {
-				
-			} break;
+// 		} break;
+		
+// 		case 2: {
 			
-			case 2: {
-				
-			} break;
-			case 3: {
-				
-			} break;
+// 		} break;
+// 		case 3: {
 			
-			case 4: {
-				
-			} break;
+// 		} break;
+		
+// 		case 4: {
 			
-			case 5: {
-				
-			} break;
-		} // end switch
-}
+// 		} break;
+		
+// 		case 5: {
+			
+// 		} break;
+// 	} // end switch
+// }
 
 
 
