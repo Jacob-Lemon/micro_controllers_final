@@ -5,6 +5,7 @@
 #include "delay.h"
 #include "gpio.h"
 #include "global_variables.h"
+#include "shift.h"
 
 /******************************************************************************
 main.c
@@ -23,14 +24,35 @@ int main(void){
 	// init_uart();
 	// init_adc();
 	
-	init_motor();
+	// init_motor();
+	init_shift_registers();
+	delay_ms(10);
+	
+	for (int i=0; i<5000; i++) {
+		register_step_motor_once(0);
+		register_step_motor_once(1);
+	}
+	
+	// register_put_serial_data(0, 0b01010101);
+	
+	/*
+	for (unsigned char i=0; i < 255; i++) {
+		register_put_serial_data(0, i);
+		delay_ms(100);
+	}
+	*/
 	
 	
+	
+	
+	/*
 	for (int i = 0; i<80; i++) {
 		step_motor_clockwise(1);
 		// step_motor_counterclockwise(1);
 		// delay_ms(200);
 	}
+	*/
+	
 	
 	return 0;
 }

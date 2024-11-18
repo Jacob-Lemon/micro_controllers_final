@@ -3,7 +3,9 @@
 #include "delay.h"
 #include "gpio.h"
 #include "shift.h"
+
 #include "global_variables.h"
+
 
 #define steps_multiplier 57 // for moving 10 degrees
 unsigned char step_array[] = {0x80, 0x40, 0x20, 0x10}; // normal way. original way!
@@ -118,6 +120,7 @@ void step_motor_counterclockwise(int steps) {
 
 
 //may not be necessary
+/*
 int lookupDegree(char input) {
 	// Handle blank space
 	if (input == ' ') {
@@ -141,24 +144,28 @@ int lookupDegree(char input) {
 		}
 	}
 }
+*/
 
 
 
 // need to protect against bad input?
 // returns which flap number a given character is
-int get_character_index(char flap_char) {
+
+int get_char_index(char flap_char) {
 	// find the index of the character
 	for (int i = 0; i < 36; i++) {
 		if (flap_order[i] == flap_char) {
 			return i;
 		}
 	}
+	return 0;
 }
+
 
 // returns 1 if Z will be passed, and 0 if not
 int Z_is_passed(char current_char, char next_char) {
-	int current_index = get_character_index(current_char);
-	int next_index = get_character_index(next_char);
+	int current_index = get_char_index(current_char);
+	int next_index = get_char_index(next_char);
 	int ZIndex = 35;
 	
 	// Check if we pass through Z 
@@ -174,8 +181,8 @@ int Z_is_passed(char current_char, char next_char) {
 //finds the number of flips needed to get between two specific flaps
 int get_flap_distance(char current_flap, char next_flap) {
     // Get the indices of both characters
-    int current_flap_index = get_character_index(current_flap);
-    int next_flap_index = get_character_index(next_flap);
+    int current_flap_index = get_char_index(current_flap);
+    int next_flap_index = get_char_index(next_flap);
     
     // Calculate the distance
     int distance = next_flap_index - current_flap_index;
@@ -196,8 +203,8 @@ int get_flap_distance(char current_flap, char next_flap) {
 
 // should allow for motors to all turn together
 void move_to_flap(int motors_needing_rotating[6], unsigned char next_flap[6]) {
-    int flap_distance_in_steps[6] = {0}; //flap distance for each motor_id
-    int Z_is_passed_flag = 0; //if step distance needs to be adjusted
+	int flap_distance_in_steps[6] = {0}; //flap distance for each motor_id
+	int Z_is_passed_flag = 0; //if step distance needs to be adjusted
 	int biggest_flap_change = 0; //for keeping track of which motor has to rotate the most
 
     //update flap distance for each motor

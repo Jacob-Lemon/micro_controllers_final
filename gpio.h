@@ -4,15 +4,15 @@
 #include "stm32l476xx.h"
 //---------- Macros for use with the GPIO pins ----------
 // PB0 - DATA0
-#define DATA_0_PORT GPIOB
+#define DATA_0_PORT GPIOC
 #define DATA_0_PIN  0
 
 // PB1 - SHCP0
-#define SHCP_0_PORT GPIOB
+#define SHCP_0_PORT GPIOC
 #define SHCP_0_PIN  1
 
 // PB2 - STCP0
-#define STCP_0_PORT GPIOB
+#define STCP_0_PORT GPIOC
 #define STCP_0_PIN  2
 
 // PB3 - DATA1
