@@ -39,6 +39,33 @@
 #define STCP_2_PORT GPIOB
 #define STCP_2_PIN  8
 
+//-----hall effect sensors-----
+// hall effect sensor 0 - PC0
+#define HALL_0_PORT GPIOC
+#define HALL_0_PIN  0
+
+// hall effect sensor 1 - PC1
+#define HALL_1_PORT GPIOB
+#define HALL_1_PIN  0
+
+// hall effect sensor 2 - PC2
+#define HALL_2_PORT GPIOC
+#define HALL_2_PIN  2
+
+// hall effect sensor 3 - PC3
+#define HALL_3_PORT GPIOC
+#define HALL_3_PIN  3
+
+// hall effect sensor 4 - PC4
+#define HALL_4_PORT GPIOC
+#define HALL_4_PIN  4
+
+// hall effect sensor 5 - PC5
+#define HALL_5_PORT GPIOC
+#define HALL_5_PIN  5
+
+
+
 //----- end macros for use with GPIO pins
 
 

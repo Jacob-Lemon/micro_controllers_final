@@ -83,3 +83,9 @@ example call:
 int digital_read(GPIO_TypeDef *port, int pin) {
     return (port->IDR & (1 << pin)) ? 1 : 0; // Read the pin state
 }
+
+
+
+
+
+

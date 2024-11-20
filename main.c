@@ -6,6 +6,7 @@
 #include "gpio.h"
 #include "global_variables.h"
 #include "shift.h"
+#include "hall.h"
 
 /******************************************************************************
 main.c
@@ -20,18 +21,79 @@ on register ids:
 
 
 int main(void){
+	// enable GPIO clocks
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN; // enable GPIO clock B
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN; // enable GPIO clock C
 	// initializations
 	// init_uart();
 	// init_adc();
 	
 	// init_motor();
+	
+	init_hall_effect_sensors();
 	init_shift_registers();
+
 	delay_ms(10);
 	
-	for (int i=0; i<5000; i++) {
+	// reset the motors to blank
+	
+	
+	/*
+	for (int i=0; i<2000; i++) {
 		register_step_motor_once(0);
-		register_step_motor_once(1);
+		// register_step_motor_once(1);
+		delay_us(10);
 	}
+	*/
+	
+	/*
+	while (
+		get_hall_data(0) ||
+		get_hall_data(1) 
+	) {
+		if(!get_hall_data(0)) {
+			register_step_motor_once(0);
+		}
+		else if (!get_hall_data(1)) {
+			register_step_motor_once(1);
+		}
+	} // end loop
+	*/
+	
+	
+	
+	
+	while (get_hall_data(1)) {
+		register_step_motor_once(0);
+	}
+	
+	for (int i=0; i<520; i++) {
+		register_step_motor_once(0);
+	}
+	delay_ms(500);
+	
+	int motors_to_rotate[6] = {1, 0, 0, 0, 0, 0};
+	unsigned char next[6] = {'Q', ' ', ' ', ' ', ' ', ' '};
+	
+	move_to_flap(motors_to_rotate, next);
+	
+	delay_ms(300);
+	
+	unsigned char next_next[6] = {'P', ' ', ' ', ' ', ' ', ' '};
+	
+	move_to_flap(motors_to_rotate, next_next);
+	
+	delay_ms(300);
+	
+	next_next[0] = '2';
+	
+	move_to_flap(motors_to_rotate, next_next);
+	
+	delay_ms(300);
+	
+	next_next[0] = ' ';
+	
+	move_to_flap(motors_to_rotate, next_next);
 	
 	// register_put_serial_data(0, 0b01010101);
 	

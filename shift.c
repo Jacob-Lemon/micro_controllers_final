@@ -200,7 +200,7 @@ quality assurance testing:
 	exactly as we want with no bugs. This is a perfect function. Programmers
 	dream of writing functions as perfect as this.
 ******************************************************************************/
-#define wait_us 5 // 4 is about as fast as it can work. It is 5 for safety
+#define wait_us 15 // 4 is about as fast as it can work. It is 5 for safety
 void register_put_serial_data(int register_id, unsigned char data) {
 	for (int i=0; i<8; i++) {
 		// get the current bit we want to serial output
