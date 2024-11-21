@@ -50,7 +50,7 @@
 
 // hall effect sensor 2 - PC2
 #define HALL_2_PORT GPIOC
-#define HALL_2_PIN  2
+#define HALL_2_PIN  3
 
 // hall effect sensor 3 - PC3
 #define HALL_3_PORT GPIOC

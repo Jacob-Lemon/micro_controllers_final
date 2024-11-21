@@ -5,15 +5,13 @@
 
 void init_hall_effect_sensors() {
 	// init the hall effect sensors 0-5
-	// set_pin_mode(HALL_0_PORT, HALL_0_PIN, OUTPUT);
+	
+	set_pin_mode(HALL_0_PORT, HALL_0_PIN, INPUT);
 	set_pin_mode(HALL_1_PORT, HALL_1_PIN, INPUT);
-	// set_pull_up_down(HALL_1_PORT, HALL_1_PIN, 1); // set to pull up
-	
-	
-	// set_pin_mode(HALL_2_PORT, HALL_2_PIN, OUTPUT);
-	// set_pin_mode(HALL_3_PORT, HALL_3_PIN, OUTPUT);
-	// set_pin_mode(HALL_4_PORT, HALL_4_PIN, OUTPUT);
-	// set_pin_mode(HALL_5_PORT, HALL_5_PIN, OUTPUT);
+	set_pin_mode(HALL_2_PORT, HALL_2_PIN, INPUT);
+	set_pin_mode(HALL_3_PORT, HALL_3_PIN, INPUT);
+	set_pin_mode(HALL_4_PORT, HALL_4_PIN, INPUT);
+	set_pin_mode(HALL_5_PORT, HALL_5_PIN, INPUT);
 }
 
 int get_hall_data(int hall_id) {

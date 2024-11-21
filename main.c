@@ -62,30 +62,64 @@ int main(void){
 	
 	
 	
+	// resets!
+	/*
+	while (get_hall_data(2)) {
+		
+		// if (get_hall_data(1)) {
+		// 	register_step_motor_once(0);
+		// }
+		register_step_motor_once(1);
+		
+		// register_step_motor_once(0);
+		// register_step_motor_once(1);
+	}
+	*/
 	
-	while (get_hall_data(1)) {
+	
+		while (get_hall_data(1) ||
+				 get_hall_data(2)
+		) {
+		
+		if (get_hall_data(1)) {
+			register_step_motor_once(0);
+		}
+		if (get_hall_data(2)) {
+			register_step_motor_once(1);
+		}
+		// register_step_motor_once(0);
+		// register_step_motor_once(1);
+	}
+
+	
+	
+	// delay_ms(1000);
+	
+	// get motor 0 to blank
+	for (int i=0; i<540; i++) {
 		register_step_motor_once(0);
 	}
-	
-	for (int i=0; i<525; i++) {
-		register_step_motor_once(0);
+	// get motor 1 to blank
+	for (int i=0; i<550; i++) {
+		register_step_motor_once(1);
 	}
-	delay_ms(500);
 	
-	int motors_to_rotate[6] = {1, 0, 0, 0, 0, 0};
-	unsigned char next[6] = {'P', ' ', ' ', ' ', ' ', ' '};
+	delay_ms(1000);
 	
-	move_to_flap(motors_to_rotate, next);
+	int motors_to_rotate[6] = {1, 1, 0, 0, 0, 0};
+	unsigned char next[6] = {'A', 'P', ' ', ' ', ' ', ' '};
+	
+	// move_to_flap(motors_to_rotate, next);
 	
 	delay_ms(300);
-	
-	unsigned char next_next[6] = {'A', ' ', ' ', ' ', ' ', ' '};
+	/*
+	unsigned char next_next[6] = {'U', ' ', ' ', ' ', ' ', ' '};
 	
 	move_to_flap(motors_to_rotate, next_next);
 	
 	delay_ms(300);
 	
-	next_next[0] = 'X';
+	next_next[0] = 'S';
 	
 	move_to_flap(motors_to_rotate, next_next);
 	
@@ -97,16 +131,16 @@ int main(void){
 	
 	delay_ms(300);
 	
-	next_next[0] = '0';
+	next_next[0] = 'I';
 	
 	move_to_flap(motors_to_rotate, next_next);
 	
 	delay_ms(300);
 	
-	next_next[0] = 'N';
+	next_next[0] = 'S';
 	
 	move_to_flap(motors_to_rotate, next_next);
-	
+	*/
 	// register_put_serial_data(0, 0b01010101);
 	
 	/*
