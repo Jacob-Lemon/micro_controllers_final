@@ -63,21 +63,21 @@ int main(void){
 	
 	
 	// resets!
-	/*
-	while (get_hall_data(2)) {
+	
+	
+	while (get_hall_data(1)) {
 		
 		// if (get_hall_data(1)) {
 		// 	register_step_motor_once(0);
 		// }
 		register_step_motor_once(1);
-		
 		// register_step_motor_once(0);
 		// register_step_motor_once(1);
 	}
-	*/
 	
 	
-		while (get_hall_data(1) ||
+	/*
+	while (get_hall_data(1) ||
 				 get_hall_data(2)
 		) {
 		
@@ -87,10 +87,10 @@ int main(void){
 		if (get_hall_data(2)) {
 			register_step_motor_once(1);
 		}
-		// register_step_motor_once(0);
-		// register_step_motor_once(1);
+		//register_step_motor_once(0);
+		//register_step_motor_once(1);
 	}
-
+	*/
 	
 	
 	// delay_ms(1000);
@@ -100,14 +100,14 @@ int main(void){
 		register_step_motor_once(0);
 	}
 	// get motor 1 to blank
-	//for (int i=0; i<550; i++) {
-	//	register_step_motor_once(1);
-	//}
+	for (int i=0; i<550; i++) {
+		register_step_motor_once(1);
+	}
 	
 	delay_ms(1000);
 	
-	int motors_to_rotate[6] = {1, 1, 0, 0, 0, 0};
-	unsigned char next[6] = {'A', 'P', ' ', ' ', ' ', ' '};
+	// int motors_to_rotate[6] = {1, 1, 0, 0, 0, 0};
+	// unsigned char next[6] = {'A', 'P', ' ', ' ', ' ', ' '};
 	
 	// move_to_flap(motors_to_rotate, next);
 	
