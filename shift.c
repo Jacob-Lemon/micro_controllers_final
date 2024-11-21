@@ -55,8 +55,8 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			}
 			// update the nibble
 			motor_0_nibble = step_index[motor_orientation_0];
-			//motor 0 is higher 4 bits, motor 1 is lower 4 bits for register 0
-			data_to_register = (motor_0_nibble << 4) | motor_1_nibble;
+			//motor 1 is higher 4 bits, motor 0 is lower 4 bits for register 0
+			data_to_register = (motor_1_nibble << 4) | motor_0_nibble;
 			register_put_serial_data(0, data_to_register);
 		} break;
 		
@@ -69,8 +69,8 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			}
 			// update the nibble
 			motor_1_nibble = step_index[motor_orientation_1];
-			//motor 0 is higher 4 bits, motor 1 is lower 4 bits for register 0
-			data_to_register = (motor_0_nibble << 4) | motor_1_nibble;
+			//motor 1 is higher 4 bits, motor 0 is lower 4 bits for register 0
+			data_to_register = (motor_1_nibble << 4) | motor_0_nibble;
 			register_put_serial_data(0, data_to_register);
 		} break;
 		
@@ -83,8 +83,8 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			}
 			// update the nibble
 			motor_2_nibble = step_index[motor_orientation_2];
-			//motor 2 is higher 4 bits, motor 3 is lower 4 bits for register 1
-			data_to_register = (motor_2_nibble << 4) | motor_3_nibble;
+			//motor 3 is higher 4 bits, motor 2 is lower 4 bits for register 1
+			data_to_register = (motor_3_nibble << 4) | motor_2_nibble;
 			register_put_serial_data(1, data_to_register);
 		} break;
 
@@ -97,8 +97,8 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			}
 			// update the nibble
 			motor_3_nibble = step_index[motor_orientation_3];
-			//motor 2 is higher 4 bits, motor 3 is lower 4 bits for register 1
-			data_to_register = (motor_2_nibble << 4) | motor_3_nibble;
+			//motor 3 is higher 4 bits, motor 2 is lower 4 bits for register 1
+			data_to_register = (motor_3_nibble << 4) | motor_2_nibble;
 			register_put_serial_data(1, data_to_register);
 		} break;
 		
@@ -111,8 +111,8 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			}
 			// update the nibble
 			motor_4_nibble = step_index[motor_orientation_4];
-			//motor 4 is higher 4 bits, motor 5 is lower 4 bits for register 1
-			data_to_register = (motor_4_nibble << 4) | motor_5_nibble;
+			//motor 5 is higher 4 bits, motor 4 is lower 4 bits for register 2
+			data_to_register = (motor_5_nibble << 4) | motor_4_nibble;
 			register_put_serial_data(2, data_to_register);
 		} break;
 		
@@ -125,19 +125,11 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			}
 			// update the nibble
 			motor_5_nibble = step_index[motor_orientation_5];
-			//motor 4 is higher 4 bits, motor 5 is lower 4 bits for register 1
-			data_to_register = (motor_4_nibble << 4) | motor_5_nibble;
+			//motor 5 is higher 4 bits, motor 4 is lower 4 bits for register 2
+			data_to_register = (motor_5_nibble << 4) | motor_4_nibble;
 			register_put_serial_data(2, data_to_register);
 		} break;
 	} // end switch
-	
-	// assign output
-		
-	// create character by concatenation { index[motor_orientation_0], index[motor_orientation_1]};
-	
-	//
-	
-	
 	
 }
 

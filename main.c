@@ -100,9 +100,9 @@ int main(void){
 		register_step_motor_once(0);
 	}
 	// get motor 1 to blank
-	for (int i=0; i<550; i++) {
-		register_step_motor_once(1);
-	}
+	//for (int i=0; i<550; i++) {
+	//	register_step_motor_once(1);
+	//}
 	
 	delay_ms(1000);
 	
