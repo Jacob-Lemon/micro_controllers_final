@@ -67,31 +67,43 @@ int main(void){
 		register_step_motor_once(0);
 	}
 	
-	for (int i=0; i<520; i++) {
+	for (int i=0; i<525; i++) {
 		register_step_motor_once(0);
 	}
 	delay_ms(500);
 	
 	int motors_to_rotate[6] = {1, 0, 0, 0, 0, 0};
-	unsigned char next[6] = {'Q', ' ', ' ', ' ', ' ', ' '};
+	unsigned char next[6] = {'P', ' ', ' ', ' ', ' ', ' '};
 	
 	move_to_flap(motors_to_rotate, next);
 	
 	delay_ms(300);
 	
-	unsigned char next_next[6] = {'P', ' ', ' ', ' ', ' ', ' '};
+	unsigned char next_next[6] = {'A', ' ', ' ', ' ', ' ', ' '};
 	
 	move_to_flap(motors_to_rotate, next_next);
 	
 	delay_ms(300);
 	
-	next_next[0] = '2';
+	next_next[0] = 'X';
 	
 	move_to_flap(motors_to_rotate, next_next);
 	
 	delay_ms(300);
 	
-	next_next[0] = ' ';
+	next_next[0] = 'T';
+	
+	move_to_flap(motors_to_rotate, next_next);
+	
+	delay_ms(300);
+	
+	next_next[0] = '0';
+	
+	move_to_flap(motors_to_rotate, next_next);
+	
+	delay_ms(300);
+	
+	next_next[0] = 'N';
 	
 	move_to_flap(motors_to_rotate, next_next);
 	
