@@ -64,15 +64,15 @@ int main(void){
 	
 	
 	while (get_hall_data(1)) {
-		register_step_motor_once(0);
+		register_step_motor_once(1);
 	}
 	
 	for (int i=0; i<525; i++) {
-		register_step_motor_once(0);
+		register_step_motor_once(1);
 	}
 	delay_ms(500);
 	
-	int motors_to_rotate[6] = {1, 0, 0, 0, 0, 0};
+	int motors_to_rotate[6] = {0, 1, 0, 0, 0, 0};
 	unsigned char next[6] = {'P', ' ', ' ', ' ', ' ', ' '};
 	
 	move_to_flap(motors_to_rotate, next);
