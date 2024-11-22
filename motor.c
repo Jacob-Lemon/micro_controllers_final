@@ -202,6 +202,13 @@ int get_flap_distance(char current_flap, char next_flap) {
 
 
 // should allow for motors to all turn together
+/*
+some light thoughts from Jacob
+do we need to pass in motors_needing_rotating?
+could we compare each current_flap[i] to where it needs to go?
+	current_flap[i] != next_flap[i]
+
+*/
 void move_to_flap(int motors_needing_rotating[6], unsigned char next_flap[6]) {
 	int flap_distance_in_steps[6] = {0}; //flap distance for each motor_id
 	int Z_is_passed_flag = 0; //if step distance needs to be adjusted
