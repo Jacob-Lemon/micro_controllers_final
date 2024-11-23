@@ -252,7 +252,112 @@ Fixing the problem of multiple not moving at once:
 
 
 
+Resetting all flaps to blank at the same time:
 
-    
+    this sort of implementation will get them all to the magnet, then after that flip them to blank,
+    which is not ideal, need to find a way to have them all flip to blank at the same time
 
+        while (get_hall_data(1) ||
+                        get_hall_data(2)
+                ) {
+                
+                if (get_hall_data(1)) {
+                    register_step_motor_once(1);
+                }
+                if (get_hall_data(2)) {
+                    register_step_motor_once(0);
+                }
+                //register_step_motor_once(0);
+                //register_step_motor_once(1);
+            }
+
+    Need to both detect the magnet and have a seperate value that determines how much longer to rotate
+    Maybe create an array of all of the callibration values:
+
+        reset_values[550, 550, 550, 550, 550, 550]
+
+    But also need to keep others looking for magnet while others are resetting to blank, something like this maybe?
+
+        int motor_0_reset_value
+        if (looking for magnet 0) {
+            step motor 0
+        }
+        else if (motor_0_reset_value < reset_values[0]) {
+            step motor 0
+            motor_0_reset_value += 1
+        }
+
+    Extending to all of the motors and adding more arrays
+
+    int reset_values[550, 550, 550, 550, 550, 550];
+    int motor_reset_values[6] = 0;
+    int magnet_detected[6] = 0;
+    int motor_completed_reset[6] = 0;
+
+    while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
+
+        if (!motor_completed_reset[0]) {
+            if (get_hall_data(0)) { //keep rotating until the magnet is detected
+                register_step_motor_once(0);
+            }
+            else if (!get_hall_data(0)) { //once the magnet is detected throw a flag that says reset time
+                magnet_detected[0] = 1;
+            }
+            else if (magnet_detected[0] && (motor_reset_values[0] < reset_values[0])) { //reset to blank
+                register_step_motor_once(0);
+                motor_reset_values[0] += 1;
+            }
+            else if (motor_reset_values[0] == reset_values[0]) { //motor 0 in the reset position so set flag
+                motor_completed_reset[0] = 1;
+            }
+        }
+        else if (!motor_completed_reset[1]) {
+            if (get_hall_data(1)) {
+                register_step_motor_once(1);
+            }
+            else if (!get_hall_data(1)) {
+                magnet_detected[1] = 1;
+            }
+            else if (magnet_detected[1] && motor_reset_values[1] < reset_values[1]) {
+                register_step_motor_once(1);
+            }
+            else if (motor_reset_values[1] == reset_values[1]) { //motor 0 in the reset position so set flag
+                motor_completed_reset[1] = 1;
+            }
+        }
+
+        etc...
+
+    }
+
+
+    can simplify using a for loop since it is a bunch of array indices
+
+    int reset_values[6] = {550, 550, 550, 550, 550, 550};
+    int motor_reset_values[6] = {0};
+    int magnet_detected[6] = {0};
+    int motor_completed_reset[6] = {0};
+
+    while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
+          && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
+
+        for (int motor_id = 0; motor_id < 6; motor_id++) { //go through each motor
+            if (!motor_completed_reset[motor_id]) {
+                if (get_hall_data(motor_id) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
+                    register_step_motor_once(motor_id);
+                }
+                else if (!get_hall_data(motor_id) && !magnet_detected[motor_id]) { //once the magnet is detected throw a flag that means time to go to blank
+                    magnet_detected[motor_id] = 1;
+                }
+                else if (magnet_detected[motor_id] && (motor_reset_values[motor_id] < reset_values[motor_id])) { //reset to blank
+                    register_step_motor_once(motor_id);
+                    motor_reset_values[motor_id] += 1;
+                }
+                else if (motor_reset_values[motor_id] == reset_values[motor_id]) { //motor_id index in the reset position so set flag
+                    motor_completed_reset[motor_id] = 1;
+                    \\once all motors have completed going to blank the while loop will stop
+                }
+            }
+        }
+    }
 

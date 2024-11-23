@@ -84,6 +84,43 @@ int main(void){
 	
 	delay_ms(500);
 	*/
+
+
+	//code that might reset all of them
+
+	// int reset_values[6] = {550, 550, 550, 550, 550, 550};
+    // int motor_reset_values[6] = {0};
+    // int magnet_detected[6] = {0};
+    // int motor_completed_reset[6] = {0};
+
+    // while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
+    //       && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
+
+    //     for (int motor_id = 0; motor_id < 6; motor_id++) { //go through each motor
+    //         if (!motor_completed_reset[motor_id]) {
+    //             if (get_hall_data(motor_id) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
+    //                 register_step_motor_once(motor_id);
+    //             }
+    //             else if (!get_hall_data(motor_id) && !magnet_detected[motor_id]) { //time to reset to blank
+    //                 magnet_detected[motor_id] = 1; //flag that means time to go to blank
+    //             }
+    //             else if (magnet_detected[motor_id] && (motor_reset_values[motor_id] < reset_values[motor_id])) { //move to blank
+    //                 register_step_motor_once(motor_id);
+    //                 motor_reset_values[motor_id] += 1;
+    //             }
+    //             else if (motor_reset_values[motor_id] == reset_values[motor_id]) { //motor_id index in the reset position so set flag
+    //                 motor_completed_reset[motor_id] = 1;
+    //                 \\once all motors have completed going to blank the while loop will stop
+    //             }
+    //         }
+    //     }
+    // }
+
+
+
+
+
+
 	
 	while (get_hall_data(1) ||
 				 get_hall_data(2)
