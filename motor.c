@@ -201,28 +201,20 @@ int get_flap_distance(char current_flap, char next_flap) {
 // }
 
 
-// should allow for motors to all turn together
-/*
-some light thoughts from Jacob
-do we need to pass in motors_needing_rotating?
-could we compare each current_flap[i] to where it needs to go?
-	current_flap[i] != next_flap[i]
-
-*/
-void move_to_flap(int motors_needing_rotating[6], unsigned char next_flap[6]) {
+// function to allow motors to all turn together
+void move_to_flap(unsigned char next_flaps[6]) {
 	int flap_distance_in_steps[6] = {0}; //flap distance for each motor_id
 	int Z_is_passed_flag = 0; //if step distance needs to be adjusted
 	int biggest_flap_change = 0; //for keeping track of which motor has to rotate the most
 
     //update flap distance for each motor
     for (int motor_id = 0; motor_id < 6; motor_id++) {
-        if (motors_needing_rotating[motor_id] == 1) { // only update motors that need to rotate
-            Z_is_passed_flag = Z_is_passed(current_flap[motor_id], next_flap[motor_id]);
-            flap_distance_in_steps[motor_id] = get_flap_distance(current_flap[motor_id], next_flap[motor_id]) * 57;
+        if (current_flaps[motor_id] != next_flaps[motor_id]) { // only update motors that need to rotate
+            Z_is_passed_flag = Z_is_passed(current_flaps[motor_id], next_flaps[motor_id]);
+            flap_distance_in_steps[motor_id] = get_flap_distance(current_flaps[motor_id], next_flaps[motor_id]) * 57;
             if (Z_is_passed_flag) {
                 flap_distance_in_steps[motor_id] -= 4; //rotation correction
             }
-            current_flap[motor_id] = next_flap[motor_id];  //update current flap for the motor
         }
 
         // Update biggest flap distance so we don't loop more than needed when updating motors
@@ -234,11 +226,16 @@ void move_to_flap(int motors_needing_rotating[6], unsigned char next_flap[6]) {
 
     //for loop to do steps for all motors that need to move
     for (int i = 0; i < biggest_flap_change; i++) {   //max amount of motor rotations
-        for (int motor_id = 0; motor_id < 6; motor_id++) {  //go through each motor, same as long if statements above
-            if (motors_needing_rotating[motor_id] == 1 && i < flap_distance_in_steps[motor_id]) { //only do ones that have to rotate
+        for (int motor_id = 0; motor_id < 6; motor_id++) {  //go through each motor
+            if ((current_flaps[motor_id] != next_flaps[motor_id]) && (i < flap_distance_in_steps[motor_id])) { //only do ones that have to rotate
                 register_step_motor_once(motor_id); // move motors one right after another
             }
         }
+    }
+    
+    //update current flaps 
+    for (int motor_id = 0; motor_id < 6; motor_id++) {
+        current_flaps[motor_id] = next_flaps[motor_id];
     }
 
 }

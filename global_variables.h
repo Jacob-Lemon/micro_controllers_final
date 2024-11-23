@@ -14,7 +14,7 @@ state orientation of each motor (whether it is facing A, B, A', or B')
 /*
 what each motor is currently displaying
 */
-extern unsigned char current_flap[6]; //changed to be an array for better looking code
+extern unsigned char current_flaps[6]; //changed to be an array for better looking code
 
 
 

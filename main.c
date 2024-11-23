@@ -114,40 +114,39 @@ int main(void){
 	
 	delay_ms(500);
 	
-	int motors_to_rotate[6] = {1, 1, 0, 0, 0, 0};
 	unsigned char next[6] = {'H', 'I', ' ', ' ', ' ', ' '};
 	
-	move_to_flap(motors_to_rotate, next);
+	move_to_flap(next);
 	
 	// delay_ms(300);
 	/*
-	unsigned char next_next[6] = {'U', ' ', ' ', ' ', ' ', ' '};
+	next[0] = 'S';
 	
-	move_to_flap(motors_to_rotate, next_next);
-	
-	delay_ms(300);
-	
-	next_next[0] = 'S';
-	
-	move_to_flap(motors_to_rotate, next_next);
+	move_to_flap(next);
 	
 	delay_ms(300);
 	
-	next_next[0] = 'T';
+	next[0] = 'A';
 	
-	move_to_flap(motors_to_rotate, next_next);
-	
-	delay_ms(300);
-	
-	next_next[0] = 'I';
-	
-	move_to_flap(motors_to_rotate, next_next);
+	move_to_flap(next);
 	
 	delay_ms(300);
 	
-	next_next[0] = 'S';
+	next[0] = 'A';
 	
-	move_to_flap(motors_to_rotate, next_next);
+	move_to_flap(next);
+	
+	delay_ms(300);
+	
+	next[0] = 'A';
+	
+	move_to_flap(next);
+	
+	delay_ms(300);
+	
+	next[0] = 'A';
+	
+	move_to_flap(next);
 	*/
 	// register_put_serial_data(0, 0b01010101);
 	
