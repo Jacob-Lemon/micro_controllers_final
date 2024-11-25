@@ -88,6 +88,7 @@ int main(void){
 
 	//code that might reset all of them
 
+	
 	int reset_values[6] = {550, 550, 550, 550, 550, 550};
 	int motor_reset_values[6] = {0};
 	int magnet_detected[6] = {0};
@@ -98,11 +99,15 @@ int main(void){
 
 		for (int motor_id = 0; motor_id < 6; motor_id++) { //go through each motor
 			if (!motor_completed_reset[motor_id]) {
-				if (get_hall_data(motor_id) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
+				if (get_hall_data(motor_id + 1) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
+					delay_us(5);
 					register_step_motor_once(motor_id);
+					delay_us(5);
 				}
 				else if (motor_reset_values[motor_id] < reset_values[motor_id]) { //move to blank
+					delay_us(5);
 					register_step_motor_once(motor_id);
+					delay_us(5);
 					magnet_detected[motor_id] = 1;
 					motor_reset_values[motor_id] += 1;
 				}
@@ -118,7 +123,7 @@ int main(void){
 
 
 
-
+	/*
 	
 	while (get_hall_data(1) ||
 				 get_hall_data(2)
@@ -152,6 +157,7 @@ int main(void){
 	unsigned char next[6] = {'H', 'I', ' ', ' ', ' ', ' '};
 	
 	move_to_flap(next);
+	*/
 	
 	// delay_ms(300);
 	/*

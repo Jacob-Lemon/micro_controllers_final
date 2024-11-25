@@ -34,6 +34,9 @@ int get_hall_data(int hall_id) {
 		case 5: {
 			return digital_read(HALL_5_PORT, HALL_5_PIN);
 		} break;
+		default: {
+			return 0;
+		}
 		
 	} // end switch
 	
