@@ -361,3 +361,21 @@ Resetting all flaps to blank at the same time:
         }
     }
 
+
+
+
+
+
+Determining Delays:
+
+    From online the max rpm of the motors might be around 30 rpm. The motor does 2048 steps in a full rotation, so that
+    means for 30 rpm it should do 1024 steps per second, since (30 * 2048 = 61440 steps per min, and 61440/(60 sec) = 1024 
+    steps per second). So the time between each step is (1 second)/(1024 steps) = .0009765685 which is 976.5625 microseconds
+    or about 1 ms. 
+
+    Theoretically we only need to pulse the storage clock of the shift register every 1 ms in order to have the motors going as 
+    fast as possible. But there's the problem of driving 2 motors with 1 shift register. So we need to wait 1 ms per shift register
+    update, not just everytime the shift function is called. Maybe the digital write to the storage clock pin can be a seperate
+    function. that way we have control over when it is called and how long to wait between calls? Or we can mess with systick but 
+    that might be resource intensive since the motors aren't always updating every 1ms.
+        
