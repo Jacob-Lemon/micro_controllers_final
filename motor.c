@@ -170,37 +170,51 @@ void move_to_flap(unsigned char next_flaps[6]) {
     } 
 		
 		
-	// this loop will make an array of all the motors that will be rotating to determine delay later
+	// this loop will initialize which motors are all moving at once
 	int motor_delay_value = 0;
 	for (int motor_id = 0; motor_id < 6; motor_id++) {
 			if (current_flaps[motor_id] != next_flaps[motor_id]) {
 					motor_delay_value += 1;
 			}
 	}
-
-	// motor_delay_value -= 1;
+	
 
     //for loop to do steps for all motors that need to move
     for (int i = 0; i < biggest_flap_change; i++) {   //max amount of motor rotations
         for (int motor_id = 0; motor_id < 6; motor_id++) {  //go through each motor
-            if ((current_flaps[motor_id] != next_flaps[motor_id]) && (i < flap_distance_in_steps[motor_id])) { //only do ones that have to rotate
+            if (i < flap_distance_in_steps[motor_id]) { //only do ones that have to rotate
 				register_step_motor_once(motor_id); // move motors one right after another
+				
+				// change how many motors are moving
+				if (i + 1 == flap_distance_in_steps[motor_id]) { // motor will stop after this step
+						motor_delay_value -= 1; // adjust in software the number of motors moving
+				}
             }
 						
 			// temp fix, it might matter which 3 are moving, but that's a problem for another time
 			switch (motor_delay_value) {
             case 1:
-                delay_us(64); //64 is consistent for 1 moving at the same time
+                delay_us(62); //62 is consistent for 1 moving at the same time
                 break;
             case 2:
-                delay_us(50); //50 is consistent for 2 moving at the same time
+                delay_us(48); //48 is consistent for 2 moving at the same time
+                break;
+			case 3:
+                delay_us(34); //34 is consistent for 3 moving at the same time
+                break;
+			case 4:
+                delay_us(20); //20 is consistent for 4 moving at the same time
+                break;
+			case 5:
+                delay_us(6); //6 is consistent for 5 moving at the same time
+                break;
+			case 6:
+                //no delay for 6 moving at the same time
                 break;
             default:
-                delay_us(100); // change and add more later
+                delay_us(100); // in case things break it'll go real slow
                 break;
 			}
-			//delay_us(64); //all shift registers get updated, then delay between that
-			// 50 for 2 motors moving, 64 for 1 motor moving
         }
     }
     
