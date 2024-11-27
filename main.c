@@ -21,6 +21,10 @@ test
 
 
 int main(void){
+	// set the clock to HSI, 16MHz, doesn't do anything
+	//RCC->CR |= RCC_CR_HSION; // set the clock control register to have the HSI on bit enabled
+	//while((RCC->CR & RCC_CR_HSIRDY) == 0); // loop until the HSI clock is ready
+	
 	// enable GPIO clocks
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN; // enable GPIO clock A
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN; // enable GPIO clock B
@@ -37,7 +41,7 @@ int main(void){
 	
 	init_shift_registers();
 	
-	delay_ms(200);
+	delay_ms(20);
 	
 	// reset the motors to blank
 	
@@ -71,7 +75,7 @@ int main(void){
 	//code that might reset all of them
 
 	
-	int reset_values[6] = {550, 575, 550, 550, 575, 575};
+	int reset_values[6] = {550, 570, 550, 550, 575, 575};
 	int motor_reset_values[6] = {0};
 	int magnet_detected[6] = {0};
 	int motor_completed_reset[6] = {0};
@@ -81,23 +85,22 @@ int main(void){
 		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
 	*/
 	
-	/*			
+		
 	while (!(motor_completed_reset[0] && motor_completed_reset[1])) {
-	*/
 	
+	
+	/*
 	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
 		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
+	*/
+	
 		for (int motor_id = 0; motor_id < 6; motor_id++) { //go through each motor
 			if (!motor_completed_reset[motor_id]) {
 				if (get_hall_data(motor_id) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
-					// delay_us(15);
 					register_step_motor_once(motor_id);
-					// delay_us(15);
 				}
 				else if (motor_reset_values[motor_id] < reset_values[motor_id]) { //move to blank
-					// delay_us(5);
 					register_step_motor_once(motor_id);
-					// delay_us(15);
 					magnet_detected[motor_id] = 1;
 					motor_reset_values[motor_id] += 1;
 				}
@@ -105,19 +108,39 @@ int main(void){
 					motor_completed_reset[motor_id] = 1;
 					// once all motors have completed going to blank the while loop will stop
 				}
-				// delay_us(50);
 			}
-			delay_us(200); // slow delay
+			//delay_us(1); // reset sequence doesn't need delay with 2 motors apparently
 		}
 	}
 
 
 
 
-	delay_ms(500);
-	// unsigned char next[6] = {'E', 'A', 'S', 'T', 'O', 'N'};
+	delay_ms(300);
+	unsigned char next[6] = {'H', 'I', ' ', ' ', ' ', ' '};
 	
-	// move_to_flap(next);
+	move_to_flap(next);
+	
+	delay_ms(250);
+	
+	next[0] = 'J';
+	next[1] = 'A';
+	
+	move_to_flap(next);
+	
+	delay_ms(250);
+	
+	next[0] = 'C';
+	next[1] = '0';
+	
+	move_to_flap(next);
+	
+	delay_ms(250);
+	
+	next[0] = 'B';
+	next[1] = ' ';
+	
+	move_to_flap(next);
 	
 	
 	// delay_ms(300);
@@ -149,20 +172,6 @@ int main(void){
 	next[0] = 'A';
 	
 	move_to_flap(next);
-	*/
-	// register_put_serial_data(0, 0b01010101);
-	
-	
-	
-	
-	
-	
-	/*
-	for (int i = 0; i<80; i++) {
-		step_motor_clockwise(1);
-		// step_motor_counterclockwise(1);
-		// delay_ms(200);
-	}
 	*/
 	
 	

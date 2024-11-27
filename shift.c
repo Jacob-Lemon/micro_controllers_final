@@ -134,7 +134,7 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			register_put_serial_data(2, data_to_register);
 		} break;
 	} // end switch
-	delay_us(15);
+	//delay_us(15);
 } // end register_step_motor_once
 
 //steps meaning a full step in this function, might not be able to use this
