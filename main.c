@@ -75,7 +75,7 @@ int main(void){
 	//code that might reset all of them
 
 	
-	int reset_values[6] = {550, 570, 550, 550, 575, 575};
+	int reset_values[6] = {555, 570, 550, 550, 575, 575};
 	int motor_reset_values[6] = {0};
 	int magnet_detected[6] = {0};
 	int motor_completed_reset[6] = {0};
