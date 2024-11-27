@@ -65,60 +65,6 @@ ODR gets
 
 
 
-// not needed
-unsigned int step_idx = 0;
-
-
-//not needed
-void step_motor_clockwise(int steps) {
-	steps *= steps_multiplier; // 34 right now
-	//double loops = steps*steps_multiplier;
-	
-	// step_idx = 0;
-	
-	for (int i=0; i < (steps); i++) {
-		// increase step
-		step_idx = (step_idx + 1) % 4;
-		// assign output
-		GPIOB->ODR &= step_array[step_idx];
-		GPIOB->ODR |= step_array[step_idx]; // this should work? because it is PB4-7
-		
-		GPIOC->ODR &= (step_array[step_idx] >> 4);
-		GPIOC->ODR |= (step_array[step_idx] >> 4); // this is hardcoded to output to GPIOC PC0-3
-		
-		
-		// delay_ms(1);
-		delay_us(420);
-	}
-}
-
-
-//not needed
-void step_motor_counterclockwise(int steps) {
-	// scale steps up because of the gear ratio of the stepper motor
-	steps *= steps_multiplier; // 34 right now
-	// steps *= 35;
-	
-	// step_idx = 0;
-	
-	for (int i=0; i < (steps + 1); i ++) {
-		// decrease step
-		step_idx = (step_idx > 0)? step_idx-1 : 3;
-		// assign output
-		GPIOB->ODR &= step_array[step_idx];
-		GPIOB->ODR |= step_array[step_idx]; // this should work? because it is PB4-7
-		
-		
-		GPIOC->ODR &= (step_array[step_idx] >> 4);
-		GPIOC->ODR |= (step_array[step_idx] >> 4); // this is hardcoded to output to GPIOC PC0-3
-
-		
-		delay_ms(1);
-	}
-
-}
-
-
 //may not be necessary
 /*
 int lookupDegree(char input) {
@@ -228,8 +174,10 @@ void move_to_flap(unsigned char next_flaps[6]) {
     for (int i = 0; i < biggest_flap_change; i++) {   //max amount of motor rotations
         for (int motor_id = 0; motor_id < 6; motor_id++) {  //go through each motor
             if ((current_flaps[motor_id] != next_flaps[motor_id]) && (i < flap_distance_in_steps[motor_id])) { //only do ones that have to rotate
-                register_step_motor_once(motor_id); // move motors one right after another
+							register_step_motor_once(motor_id); // move motors one right after another
+							// delay_us(15);
             }
+						delay_us(300);
         }
     }
     

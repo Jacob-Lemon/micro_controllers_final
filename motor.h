@@ -4,8 +4,6 @@
 
 void init_motor();
 
-void step_motor_clockwise(int steps);
-void step_motor_counterclockwise(int steps);
 // void motor_next_flap(int flips); //maybe use?
 int lookup_degree(char input);
 int get_char_index(char flap_char);

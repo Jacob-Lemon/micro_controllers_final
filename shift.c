@@ -57,7 +57,9 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			motor_0_nibble = step_index[motor_orientation_0];
 			//motor 1 is higher 4 bits, motor 0 is lower 4 bits for register 0
 			data_to_register = (motor_1_nibble << 4) | motor_0_nibble;
+			// delay_us(200);
 			register_put_serial_data(0, data_to_register);
+			// delay_us(200);
 		} break;
 		
 		case 1: {
@@ -71,7 +73,9 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			motor_1_nibble = step_index[motor_orientation_1];
 			//motor 1 is higher 4 bits, motor 0 is lower 4 bits for register 0
 			data_to_register = (motor_1_nibble << 4) | motor_0_nibble;
+			// delay_us(200);
 			register_put_serial_data(0, data_to_register);
+			// delay_us(200);
 		} break;
 		
 		case 2: {
@@ -130,8 +134,8 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			register_put_serial_data(2, data_to_register);
 		} break;
 	} // end switch
-	
-}
+	delay_us(15);
+} // end register_step_motor_once
 
 //steps meaning a full step in this function, might not be able to use this
 void register_step_motor_multiple(int motor_id, int steps) {
@@ -204,11 +208,8 @@ void register_put_serial_data(int register_id, unsigned char data) {
 			case 0: {
 				// assign output
 				digital_write(DATA_0_PORT, DATA_0_PIN, serial_bit); // write the data bit
-				delay_us(wait_us);
 				digital_write(SHCP_0_PORT, SHCP_0_PIN, 0); 					// shift clock goes low
-				delay_us(wait_us);
 				digital_write(SHCP_0_PORT, SHCP_0_PIN, 1); 					// shift clock goes high
-				delay_us(wait_us);
 			} break;
 			
 			case 1: {
@@ -231,13 +232,15 @@ void register_put_serial_data(int register_id, unsigned char data) {
 	} // end loop
 	// now, the shift register has the right data,
 	// so we enable the storage clock to set the output
+	
+	// delay_us(300);
 	// trigger positive edge of STCP
 	switch (register_id) {
 		case 0: {
 			digital_write(STCP_0_PORT, STCP_0_PIN, 0); // clock goes low
-			delay_us(wait_us);
+			// delay_us(wait_us);
 			digital_write(STCP_0_PORT, STCP_0_PIN, 1); // clock goes high
-			delay_us(wait_us);
+			// delay_us(wait_us);
 		} break;
 		case 1: {
 			digital_write(STCP_1_PORT, STCP_1_PIN, 0); // clock goes low

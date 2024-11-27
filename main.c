@@ -32,9 +32,12 @@ int main(void){
 	// init_motor();
 	
 	init_hall_effect_sensors();
+	
+	delay_ms(20);
+	
 	init_shift_registers();
-
-	delay_ms(10);
+	
+	delay_ms(200);
 	
 	// reset the motors to blank
 	
@@ -62,53 +65,39 @@ int main(void){
 	*/
 	
 	
-	
-	// resets!
-	/*
-	while(1) {
-		register_step_motor_once(0);
-		register_step_motor_once(1);
-	}
-	*/
-	
-	/*
-	while (get_hall_data(1)) {
-		
-		// if (get_hall_data(1)) {
-		// 	register_step_motor_once(0);
-		// }
-		register_step_motor_once(1);
-		// register_step_motor_once(1);
-		// register_step_motor_once(0);
-		// register_step_motor_once(1);
-	}
-	
-	delay_ms(500);
-	*/
+
 
 
 	//code that might reset all of them
 
 	
-	int reset_values[6] = {550, 550, 550, 550, 550, 550};
+	int reset_values[6] = {550, 575, 550, 550, 575, 575};
 	int motor_reset_values[6] = {0};
 	int magnet_detected[6] = {0};
 	int motor_completed_reset[6] = {0};
 
+	/*
 	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
 		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
-
+	*/
+	
+	/*			
+	while (!(motor_completed_reset[0] && motor_completed_reset[1])) {
+	*/
+	
+	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
+		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
 		for (int motor_id = 0; motor_id < 6; motor_id++) { //go through each motor
 			if (!motor_completed_reset[motor_id]) {
-				if (get_hall_data(motor_id + 1) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
-					delay_us(5);
+				if (get_hall_data(motor_id) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
+					// delay_us(15);
 					register_step_motor_once(motor_id);
-					delay_us(5);
+					// delay_us(15);
 				}
 				else if (motor_reset_values[motor_id] < reset_values[motor_id]) { //move to blank
-					delay_us(5);
+					// delay_us(5);
 					register_step_motor_once(motor_id);
-					delay_us(5);
+					// delay_us(15);
 					magnet_detected[motor_id] = 1;
 					motor_reset_values[motor_id] += 1;
 				}
@@ -116,49 +105,20 @@ int main(void){
 					motor_completed_reset[motor_id] = 1;
 					// once all motors have completed going to blank the while loop will stop
 				}
+				// delay_us(50);
 			}
+			delay_us(200); // slow delay
 		}
 	}
 
 
 
 
-
-	/*
-	
-	while (get_hall_data(1) ||
-				 get_hall_data(2)
-		) {
-		
-		if (get_hall_data(1)) {
-			register_step_motor_once(1);
-		}
-		if (get_hall_data(2)) {
-			register_step_motor_once(0);
-		}
-		//register_step_motor_once(0);
-		//register_step_motor_once(1);
-	}
-	
-	
-	
 	delay_ms(500);
+	// unsigned char next[6] = {'E', 'A', 'S', 'T', 'O', 'N'};
 	
-	// get motor 0 to blank
-	for (int i=0; i<550; i++) {
-		register_step_motor_once(0);
-	}
-	// get motor 1 to blank
-	for (int i=0; i<550; i++) {
-		register_step_motor_once(1);
-	}
+	// move_to_flap(next);
 	
-	delay_ms(500);
-	
-	unsigned char next[6] = {'H', 'I', ' ', ' ', ' ', ' '};
-	
-	move_to_flap(next);
-	*/
 	
 	// delay_ms(300);
 	/*
@@ -192,12 +152,7 @@ int main(void){
 	*/
 	// register_put_serial_data(0, 0b01010101);
 	
-	/*
-	for (unsigned char i=0; i < 255; i++) {
-		register_put_serial_data(0, i);
-		delay_ms(100);
-	}
-	*/
+	
 	
 	
 	

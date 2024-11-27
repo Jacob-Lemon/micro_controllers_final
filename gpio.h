@@ -3,67 +3,68 @@
 
 #include "stm32l476xx.h"
 //---------- Macros for use with the GPIO pins ----------
-// DATA0 - PB0
-#define DATA_0_PORT GPIOC
-#define DATA_0_PIN  0
+// these should be up to data with the easy wiring
+// DATA0 - PB12
+#define DATA_0_PORT GPIOB
+#define DATA_0_PIN  12
 
-// STCP0 - 
-#define STCP_0_PORT GPIOC
-#define STCP_0_PIN  2
+// STCP0 - PA11
+#define STCP_0_PORT GPIOA
+#define STCP_0_PIN  11
 
-// SHCP0 - 
-#define SHCP_0_PORT GPIOC
-#define SHCP_0_PIN  1
+// SHCP0 - PA12
+#define SHCP_0_PORT GPIOA
+#define SHCP_0_PIN  12
 
-// DATA1 - 
+// DATA1 - PB9
 #define DATA_1_PORT GPIOB
-#define DATA_1_PIN  3
+#define DATA_1_PIN  9
 
-// STCP1 - 
+// STCP1 - PB8
 #define STCP_1_PORT GPIOB
-#define STCP_1_PIN  5
+#define STCP_1_PIN  8
 
-// SHCP1 - 
-#define SHCP_1_PORT GPIOB
-#define SHCP_1_PIN  4
+// SHCP1 - PC9
+#define SHCP_1_PORT GPIOC
+#define SHCP_1_PIN  9
 
-// DATA2 - 
-#define DATA_2_PORT GPIOB
-#define DATA_2_PIN  6
+// DATA2 - PC5
+#define DATA_2_PORT GPIOC
+#define DATA_2_PIN  5
 
-// STCP2 - 
-#define STCP_2_PORT GPIOB
-#define STCP_2_PIN  8
+// STCP2 - PC6
+#define STCP_2_PORT GPIOC
+#define STCP_2_PIN  6
 
-// SHCP2 - 
-#define SHCP_2_PORT GPIOB
-#define SHCP_2_PIN  7
+// SHCP2 - PC8
+#define SHCP_2_PORT GPIOC
+#define SHCP_2_PIN  8
 
 
 //-----hall effect sensors-----
-// hall effect sensor 0 - PA9
+// hall 0 - PA10
 #define HALL_0_PORT GPIOA
-#define HALL_0_PIN  9
+#define HALL_0_PIN  10
 
-// hall effect sensor 1 - PC7
-#define HALL_1_PORT GPIOC
-#define HALL_1_PIN  7
+// hall 1 - PB3
+#define HALL_1_PORT GPIOB
+#define HALL_1_PIN  3
 
-// hall effect sensor 2 - PB6
+// hall 2 - PB5
 #define HALL_2_PORT GPIOB
-#define HALL_2_PIN  6
+#define HALL_2_PIN  5
 
-// hall effect sensor 3 - PA7
+// hall 3 - PB4
 #define HALL_3_PORT GPIOA
-#define HALL_3_PIN  7
+#define HALL_3_PIN  4
 
-// hall effect sensor 4 - PA6
-#define HALL_4_PORT GPIOA
-#define HALL_4_PIN  6
+// hall 4 - PB10
+#define HALL_4_PORT GPIOB
+#define HALL_4_PIN  10
 
-// hall effect sensor 5 - PA5
+// hall 5 - PA8
 #define HALL_5_PORT GPIOA
-#define HALL_5_PIN  5
+#define HALL_5_PIN  8
 
 
 
