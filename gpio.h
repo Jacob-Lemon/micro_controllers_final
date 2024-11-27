@@ -55,7 +55,7 @@
 #define HALL_2_PIN  5
 
 // hall 3 - PB4
-#define HALL_3_PORT GPIOA
+#define HALL_3_PORT GPIOB
 #define HALL_3_PIN  4
 
 // hall 4 - PB10
