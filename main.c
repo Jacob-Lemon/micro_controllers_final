@@ -84,23 +84,25 @@ int main(void){
 	//code that might reset all of them
 
 	
-	int reset_values[6] = {570, 570, 560, 550, 560, 560};
+	int reset_values[6] = {570, 510, 500, 600, 630, 540};
 	int motor_reset_values[6] = {0};
 	int magnet_detected[6] = {0};
 	int motor_completed_reset[6] = {0};
 
-	/*
+	
 	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
 		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
-	*/
+	
 	
 		
-	while (!(motor_completed_reset[0] && motor_completed_reset[1])) {
+	//while (!(motor_completed_reset[0] && motor_completed_reset[1])) {
 	
+	
+	//while (!(motor_completed_reset[4])) {
 	
 	/*
 	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
-		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
+		  && motor_completed_reset[3] && motor_completed_reset[4])) {
 	*/
 	
 		for (int motor_id = 0; motor_id < 6; motor_id++) { //go through each motor
