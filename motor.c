@@ -183,38 +183,38 @@ void move_to_flap(unsigned char next_flaps[6]) {
     for (int i = 0; i < biggest_flap_change; i++) {   //max amount of motor rotations
         for (int motor_id = 0; motor_id < 6; motor_id++) {  //go through each motor
             if (i < flap_distance_in_steps[motor_id]) { //only do ones that have to rotate
-								register_step_motor_once(motor_id); // move motors one right after another
-								
-								// change how many motors are moving
-								if (i + 1 == flap_distance_in_steps[motor_id]) { // motor will stop after this step
-										motor_delay_value -= 1; // adjust in software the number of motors moving
-								}
+				register_step_motor_once(motor_id); // move motors one right after another
+				
+				// change how many motors are moving
+				if (i + 1 == flap_distance_in_steps[motor_id]) { // motor will stop after this step
+						motor_delay_value -= 1; // adjust in software the number of motors moving
+				}
             }
 						
-						// temp fix, it might matter which 3 are moving, but that's a problem for another time
-						switch (motor_delay_value) {
-						case 1:
-								delay_us(62); //62 is consistent for 1 moving at the same time
-								break;
-						case 2:
-								delay_us(48); //48 is consistent for 2 moving at the same time
-								break;
-						case 3:
-								delay_us(34); //34 is consistent for 3 moving at the same time
-								break;
-						case 4:
-								delay_us(20); //20 is consistent for 4 moving at the same time
-								break;
-						case 5:
-								delay_us(6); //6 is consistent for 5 moving at the same time
-								break;
-						case 6:
-								//no delay for 6 moving at the same time
-								break;
-						default:
-								delay_us(100); // in case things break it'll go real slow
-								break;
-						}
+			// temp fix, it might matter which 3 are moving, but that's a problem for another time
+			switch (motor_delay_value) {
+			case 1:
+				delay_us(305); //305 is consistent for 1 moving at the same time, 301 limit
+				break;
+			case 2:
+				delay_us(295); //295 is consistent for 2 moving at the same time, 292 limit
+				break;
+			case 3:
+				delay_us(275); //275 is consistent for 3 moving at the same time, 271 limit
+				break;
+			case 4:
+				delay_us(250); //250 is consistent for 4 moving at the same time, 247 limit
+				break;
+			case 5:
+				delay_us(240); //240 is consistent for 5 moving at the same time, 236 limit
+				break;
+			case 6:
+				delay_us(230); //230 is consistent for 6 moving at the same time, 228 limit
+				break;
+			default:
+				delay_us(1000); // in case things break it'll go real slow
+				break;
+			}
         }
     }
     

@@ -43,39 +43,48 @@ int main(void){
 	
 	delay_ms(20);
 	
+	
+	///*
+	
+	//uart things
+	
+	// initialize uart
+	init_uart();
+	
+	//for clearing terminal and going to top left
+	unsigned char clear[] = "\033[2Ja";
+	clear[5] = 12;
+	#define CLEAR_SIZE 7
+	
+	//clear the current terminal display
+	uart_write(USART2, clear, CLEAR_SIZE);
+
+	//message that asks user for a word
+	#define ASK_MESSAGE_SIZE 51
+	unsigned char ask_for_word[ASK_MESSAGE_SIZE] = "Enter in a 6 letter or less word and press enter:\n\r";
+	
+	// various messages
+	#define DISPLAYING_SIZE 13
+	unsigned char displaying[DISPLAYING_SIZE] = "Displaying...";
+	
+	#define RESETTING_SIZE 12
+	unsigned char resetting[RESETTING_SIZE] = "Resetting...";
+	
+	
 	// reset the motors to blank
 	
-	
-	/*
-	for (int i=0; i<2000; i++) {
-		register_step_motor_once(0);
-		// register_step_motor_once(1);
-		delay_us(10);
-	}
-	*/
-	
-	/*
-	while (
-		get_hall_data(0) ||
-		get_hall_data(1) 
-	) {
-		if(!get_hall_data(0)) {
-			register_step_motor_once(0);
-		}
-		else if (!get_hall_data(1)) {
-			register_step_motor_once(1);
-		}
-	} // end loop
-	*/
-	
-	
 
 
+	//display resetting while the flaps are initializing
+	uart_write(USART2, resetting, RESETTING_SIZE);
+	
+	
+	//*/
 
 	//code that might reset all of them
 
 	
-	int reset_values[6] = {555, 570, 550, 550, 575, 575};
+	int reset_values[6] = {570, 570, 560, 550, 560, 560};
 	int motor_reset_values[6] = {0};
 	int magnet_detected[6] = {0};
 	int motor_completed_reset[6] = {0};
@@ -109,38 +118,103 @@ int main(void){
 					// once all motors have completed going to blank the while loop will stop
 				}
 			}
-			//delay_us(1); // reset sequence doesn't need delay with 2 motors apparently
+			delay_us(220); // delay needed for reset sequence, can go down to like 180 with stuttering but still works
 		}
 	}
+	
+	
+	
+	// getting input from user strings
+	unsigned char temp_string[1] = {0};
+	unsigned char string_to_display[6] = {' ', ' ', ' ', ' ', ' ', ' '};
+	
+	// main while loop that asks for word, waits until it is displayed, then repeats
+	while(1) {
+		uart_write(USART2, clear, CLEAR_SIZE);
+		
+		//ask for a word from user
+		uart_write(USART2, ask_for_word, ASK_MESSAGE_SIZE);
+		
+		// loop that reads character, puts it in display string, then displays to terminal
+		for (int i=0; i<6; i++) {
+			uart_read(USART2, temp_string, 1); //read from terminal
+			
+			char input_char = temp_string[0];
+			
+			//bad input correction (need to add backspace/enter support later)
+			//lowercase to uppercase
+			if (input_char >= 'a' && input_char <= 'z') {
+				input_char -= 32; // Convert to uppercase
+			}
+			
+			//O to zero
+			if (input_char == 'O') {
+				input_char = '0'; //change any Os to 0s
+			}
+			
+			//put edited character into display string or display blank for invalid
+			if ((input_char >= '0' && input_char <= '9') || (input_char >= 'A' && input_char <= 'Z')) {
+        		string_to_display[i] = input_char;
+			} else {
+				string_to_display[i] = ' '; //invalid characters get blank
+			}
+			
+			uart_write(USART2, temp_string, 1); //write original terminal character to the terminal
+		}
+		
+		//tell user the displaying is happening
+		uart_write(USART2, clear, CLEAR_SIZE);
+		uart_write(USART2, displaying, DISPLAYING_SIZE);
+		
+		//move to inputted string
+		move_to_flap(string_to_display);
+	}
+	
 
 
-
-
+	/*
+	
 	delay_ms(300);
-	unsigned char next[6] = {'H', 'I', ' ', ' ', ' ', ' '};
+	unsigned char next[6] = {' ', ' ', ' ', ' ', ' ', ' '};
 	
 	move_to_flap(next);
 	
-	delay_ms(250);
 	
-	next[0] = 'J';
-	next[1] = 'A';
+	delay_ms(500);
 	
+	next[0] = '2';
+	next[1] = 'K';
+	next[2] = 'W';
+	next[3] = '8';
+	next[4] = 'P';
+	next[5] = 'D';
+
 	move_to_flap(next);
-	
-	delay_ms(250);
-	
-	next[0] = 'C';
-	next[1] = '0';
-	
+
+	delay_ms(500);
+
+	next[0] = '3';
+	next[1] = 'H';
+	next[2] = 'G';
+	next[3] = '9';
+	next[4] = 'V';
+	next[5] = 'J';
+
 	move_to_flap(next);
-	
-	delay_ms(250);
-	
-	next[0] = 'B';
-	next[1] = ' ';
-	
+
+	delay_ms(500);
+
+	next[0] = '6';
+	next[1] = 'R';
+	next[2] = 'B';
+	next[3] = 'Z';
+	next[4] = '4';
+	next[5] = 'Y';
+
 	move_to_flap(next);
+
+
+	*/
 	
 	
 	// delay_ms(300);
@@ -247,13 +321,3 @@ pin layout
 
 
 */
-
-
-
-
-
-
-
-
-
-
