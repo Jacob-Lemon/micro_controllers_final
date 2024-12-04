@@ -7,6 +7,7 @@
 #include "global_variables.h"
 #include "shift.h"
 #include "hall.h"
+#include "interrupts.h"
 
 /******************************************************************************
 main.c
@@ -70,6 +71,51 @@ int main(void){
 	#define RESETTING_SIZE 12
 	unsigned char resetting[RESETTING_SIZE] = "Resetting...";
 	
+
+	// welcome ui message
+	#define WELCOME_SIZE 606
+	unsigned char welcome_message[] = 
+    "+------------------------------------------------+\n\r"
+    "|                                                |\n\r"
+    "|              SPLIT FLAP DISPLAY                |\n\r"
+    "|                                                |\n\r"
+    "+------------------------------------------------+\n\r"
+    "\n\r"
+    "Welcome to the Split Flap Display Interface!\n\r"
+    "\n\r"
+    "Please choose a mode:\n\r"
+    "+--------------------------------------+\n\r"
+    "| [1] Text Enter Mode                  |\n\r"
+    "| [2] Clock Mode                       |\n\r"
+    "| [3] Reset Split Flap Display         |\n\r"
+    "| [4] Credits                          |\n\r"
+    "+--------------------------------------+\n\r"
+    "\n\r"
+    "Enter your choice: ";
+	
+	
+	//credits
+	#define CREDITS_MESSAGE_SIZE 612
+	unsigned char credits_message[] = 
+    "+----------------------------------------------------------------+\n\r"
+    "|                                                                |\n\r"
+    "|                           CREDITS                              |\n\r"
+    "|                                                                |\n\r"
+    "|           Created by Easton McBeth and Jacob Lemon             |\n\r"
+    "|          For ECE 3710 Microcontrollers Final Project           |\n\r"
+    "|                     Completed Fall 2024                        |\n\r"
+    "|                                                                |\n\r"
+    "+----------------------------------------------------------------+\n\r";
+
+	
+	
+	//info for the user
+	#define ESCAPE_MESSAGE_SIZE 58
+	unsigned char escape_message[] = 
+    "Press the escape key at any time to go back to the menu\n\r\n";
+	
+	
+	
 	// getting input from user strings
 	unsigned char temp_string[1] = {0};
 	unsigned char string_to_display[6] = {' ', ' ', ' ', ' ', ' ', ' '};
@@ -78,107 +124,222 @@ int main(void){
 	//to fix error of first 5 characters concatenated with last character in terminal
 	int terminal_index = 0;
 	
-	
-	// reset the motors to blank
-	
 
-
+	//clear screen for resetting
+	uart_write(USART2, clear, CLEAR_SIZE);
+	
+	
 	//display resetting while the flaps are initializing
 	uart_write(USART2, resetting, RESETTING_SIZE);
 	
-	display_reset();
+	delay_ms(1700); //simulated for unconnected
+	//display_reset();
+	
+	
+	
+	unsigned char mode_selection[1] = {0};
+	int mode_int = 0;
+	
 
-	
-	
-	
 	// main while loop that asks for word, waits until it is displayed, then repeats
 	while(1) {
-		uart_write(USART2, clear, CLEAR_SIZE);
-		
-		//ask for a word from user
-		uart_write(USART2, ask_for_word, ASK_MESSAGE_SIZE);
-		
-		string_to_display_IDX = 0;
-		terminal_index = 0;
-		temp_string[0] = 0;
-		while(temp_string[0] != '\r') {
-			uart_read(USART2, temp_string, 1); //read from terminal
+		if (mode_int == 0) {
+			//clear screen for showing ui
+			uart_write(USART2, clear, CLEAR_SIZE);
 			
-			// handle backspacing (127 or DEL is what putty recognizes backspace as)
-			if (temp_string[0] == 127) {
-				
-				// keep index in array bounds
-				string_to_display_IDX -= 1;
-				if (string_to_display_IDX < 0) {
-					string_to_display_IDX = 0;
-				}
-				
-				//keeping track of the location on the terminal
-				terminal_index -= 1;
-				if (terminal_index < 0) {
-					terminal_index = 0;
-				}
-				
-				uart_write(USART2, temp_string, 1); //write backspace character to the terminal
-				
-			}
-			// put letters and spaces into string_to_display
-			else if ((temp_string[0] >= '0' && temp_string[0] <= '9') || (temp_string[0] >= 'A' && temp_string[0] <= 'Z') || (temp_string[0] >= 'a' && temp_string[0] <= 'z') || (temp_string[0] == ' ')) {
-				char input_char = temp_string[0];
+			temp_string[0] = 0; //reset for use in any state
 			
-				//bad input correction (need to add backspace/enter support later)
-				//lowercase to uppercase
-				if (input_char >= 'a' && input_char <= 'z') {
-					input_char -= 32; // Convert to uppercase
-				}
+			//show welcome message
+			uart_write(USART2, welcome_message, WELCOME_SIZE);
+			
+			//loop to handle user selection input and various bad user input possibilities
+			terminal_index = 0;
+			mode_selection[0] = 0;
+			while(mode_selection[0] != '\r') {
+				uart_read(USART2, mode_selection, 1); //read from terminal
 				
-				//O to zero
-				if (input_char == 'O') {
-					input_char = '0'; //change any Os to 0s
-				}
-				
-				//put edited character into display string or display blank for invalid
-				if ((input_char >= '0' && input_char <= '9') || (input_char >= 'A' && input_char <= 'Z') || (input_char == ' ')) {
-					if (terminal_index == string_to_display_IDX) { //keeps the first 6 characters in the terminal display
-						string_to_display[string_to_display_IDX] = input_char;
+				// handle backspacing (127 (DEL) is what putty recognizes backspace as)
+				if (mode_selection[0] == 127) {
+					
+					//can only backspace if a number has been entered
+					if (terminal_index > 0) {
+						uart_write(USART2, mode_selection, 1); //write backspace character to the terminal
+						mode_int = 0;
+					}
+					
+					//keeping don't let index flag go lower than needed
+					terminal_index -= 1;
+					if (terminal_index < 0) {
+						terminal_index = 0;
 					}
 				}
-				else {
-					string_to_display[string_to_display_IDX] = ' ';
+				
+				//must be specific number input                     prevents multiple number input
+				if (mode_selection[0] >= '1' && mode_selection[0] <= '4' && terminal_index == 0) {
+					mode_int = mode_selection[0] - '0'; //convert char number to int
+					uart_write(USART2, mode_selection, 1); //show the typed number
+					terminal_index += 1; //can only backspace when terminal index == 1
 				}
 				
-				//don't reset terminal index
-				terminal_index += 1;
-				
-				//increase string_to_display index and make sure it stays in bounds
-				string_to_display_IDX += 1;
-				if (string_to_display_IDX > 5) {
-					string_to_display_IDX = 5;
+				//don't rewrite ui screen if mode hasn't been selected properly (ex: mode_int still == 0)
+				if ((mode_selection[0] == '\r') && (mode_int == 0)) {
+					mode_selection[0] = 0;
 				}
+					
 				
-				uart_write(USART2, temp_string, 1); //write original terminal character to the terminal
 			}
 			
-			// fill rest of array with spaces when the enter key is pressed
-			else if (temp_string[0] == '\r') {
-				for (int i = string_to_display_IDX; i < 6; i++) {
-					if (string_to_display_IDX != 5) { // don't replace last character of array
-						string_to_display[i] = ' ';
-					}
-				}
-			}
-			
+			//delay_ms(1300);
 		}
-		
-		//tell user the displaying is happening
-		uart_write(USART2, clear, CLEAR_SIZE);
-		uart_write(USART2, displaying, DISPLAYING_SIZE);
-		uart_write(USART2, string_to_display, 6);
-		
-		//move to inputted string
-		move_to_flap(string_to_display);
+		else if (mode_int == 1) {
+			uart_write(USART2, clear, CLEAR_SIZE);
+			
+			//show escape message at top
+			uart_write(USART2, escape_message, ESCAPE_MESSAGE_SIZE);
+			
+			//ask for a word from user
+			uart_write(USART2, ask_for_word, ASK_MESSAGE_SIZE);
+			
+			string_to_display_IDX = 0;
+			terminal_index = 0;
+			temp_string[0] = 0;
+			while(temp_string[0] != '\r') {
+				uart_read(USART2, temp_string, 1); //read from terminal
+				
+				// escape character goes back to welcome ui
+				if (temp_string[0] == 27) {
+					mode_int = 0;
+					break; //goes to while(1)
+				}
+				
+				// handle backspacing (127 (DEL) is what putty recognizes backspace as)
+				if (temp_string[0] == 127) {
+					
+					// keep index in array bounds
+					string_to_display_IDX -= 1;
+					if (string_to_display_IDX < 0) {
+						string_to_display_IDX = 0;
+					}
+					
+					//keeping track of the location on the terminal
+					terminal_index -= 1;
+					if (terminal_index < 0) {
+						terminal_index = 0;
+					}
+					
+					uart_write(USART2, temp_string, 1); //write backspace character to the terminal
+					
+				}
+				// put letters and spaces into string_to_display
+				else if ((temp_string[0] >= '0' && temp_string[0] <= '9') || (temp_string[0] >= 'A' && temp_string[0] <= 'Z') || (temp_string[0] >= 'a' && temp_string[0] <= 'z') || (temp_string[0] == ' ')) {
+					char input_char = temp_string[0];
+				
+					//bad input correction (need to add backspace/enter support later)
+					//lowercase to uppercase
+					if (input_char >= 'a' && input_char <= 'z') {
+						input_char -= 32; // Convert to uppercase
+					}
+					
+					//O to zero
+					if (input_char == 'O') {
+						input_char = '0'; //change any Os to 0s
+					}
+					
+					//put edited character into display string or display blank for invalid
+					if ((input_char >= '0' && input_char <= '9') || (input_char >= 'A' && input_char <= 'Z') || (input_char == ' ')) {
+						if (terminal_index == string_to_display_IDX) { //keeps the first 6 characters in the terminal display
+							string_to_display[string_to_display_IDX] = input_char;
+						}
+					}
+					else {
+						string_to_display[string_to_display_IDX] = ' ';
+					}
+					
+					//don't reset terminal index
+					terminal_index += 1;
+					
+					//increase string_to_display index and make sure it stays in bounds
+					string_to_display_IDX += 1;
+					if (string_to_display_IDX > 5) {
+						string_to_display_IDX = 5;
+					}
+					
+					uart_write(USART2, temp_string, 1); //write original terminal character to the terminal
+				}
+				
+				// fill rest of array with spaces when the enter key is pressed
+				else if (temp_string[0] == '\r') {
+					for (int i = string_to_display_IDX; i < 6; i++) {
+						if (string_to_display_IDX != 5) { // don't replace last character of array
+							string_to_display[i] = ' ';
+						}
+					}
+				}
+							
+			}
+			
+			//tell user the displaying is happening
+			uart_write(USART2, clear, CLEAR_SIZE);
+			uart_write(USART2, displaying, DISPLAYING_SIZE);
+			uart_write(USART2, string_to_display, 6);
+			
+			//move to inputted string
+			move_to_flap(string_to_display);
+		}
+		else if (mode_int == 2) {
+			uart_write(USART2, clear, CLEAR_SIZE);
+			
+			//show escape message at top
+			uart_write(USART2, escape_message, ESCAPE_MESSAGE_SIZE);
+			
+			unsigned char clock[5] = {'c', 'l', 'o', 'c', 'k'};
+			uart_write(USART2, clock, 5);
+			
+			temp_string[0] = 0;
+			while (temp_string[0] != 27) {
+				uart_read(USART2, temp_string, 1); //read from terminal
+			}
+			mode_int = 0;
+		}
+		else if (mode_int == 3) {
+			//clear screen for resetting
+			uart_write(USART2, clear, CLEAR_SIZE);
+			
+			//display resetting while the flaps are initializing
+			uart_write(USART2, resetting, RESETTING_SIZE);
+			
+			delay_ms(1700); //uncomment when connected to hardware
+			//display_reset();
+			
+			mode_int = 0;
+		}
+		else if (mode_int == 4) {
+			//clear screen
+			uart_write(USART2, clear, CLEAR_SIZE);
+			
+			//show escape message at top
+			uart_write(USART2, escape_message, ESCAPE_MESSAGE_SIZE);
+			
+			//show credits
+			uart_write(USART2, credits_message, CREDITS_MESSAGE_SIZE);
+			
+			temp_string[0] = 0;
+			while (temp_string[0] != 27) {
+				uart_read(USART2, temp_string, 1); //read from terminal
+			}
+			mode_int = 0;
+		}
+		else {
+			uart_write(USART2, clear, CLEAR_SIZE);
+			
+			unsigned char invalid_input[24] = {"Invalid input, try again"};
+			uart_write(USART2, invalid_input, 24);
+			mode_int = 0;
+			
+			//have it show for long enough
+			delay_ms(1700);
+		}
 	}
-	
 
 
 	/*
