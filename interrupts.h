@@ -15,6 +15,6 @@ void EXTI0_IRQHandler();
 void EXTI1_IRQHandler();
 void EXTI2_IRQHandler();
 
-
+void increment_time(unsigned char current_time[6]);
 
 #endif

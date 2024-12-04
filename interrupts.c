@@ -1,7 +1,10 @@
 #include "interrupts.h"
+
 #include "stm32l476xx.h"
 #include "delay.h"
 #include "motor.h"
+#include "global_variables.h"
+
 
 #define SysTick_CTRL_CLKSOURCE 0x00000007
 //#define SysTick_CTRL_TICKINT 0x00000007
@@ -26,59 +29,7 @@ void init_systick(int ticks) {
 	//SysTick->CTRL |= SysTick_CTRL_ENABLE;
 }
 
-/*
-init exti
-*/
-void init_exti() {
-	// enable GPIO clock
-	// RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
-	
-	// enable PB0-2 as inputs
-	// GPIOB->MODER &= 0b11000000; // set PB0-2
-	GPIOB->MODER &= 0xFFFFFFC0;
-	GPIOB->MODER |= 0x00000000; // sets PB0-2 as inputs
-	
-	// set pullup resistors
-	GPIOB->PUPDR &= 0xFFFFFFD5;
-	GPIOB->PUPDR |= 0x00000015;
-	
-	//-----EXTI 0-----
-	// enable interrupt
-	NVIC_EnableIRQ(EXTI0_IRQn);
-	// connect External line to GPI
-	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
-	SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI0;
-	SYSCFG->EXTICR[0] |=  SYSCFG_EXTICR1_EXTI0_PB;
-	// interrupt mask register
-	EXTI->IMR1 |= EXTI_IMR1_IM0;
-	//rising edge trigger selection
-	EXTI->RTSR1 |= EXTI_RTSR1_RT0;
-	
-	//-----EXTI 1-----
-	// enable interrupt
-	NVIC_EnableIRQ(EXTI1_IRQn);
-	// connect External line to GPI
-	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
-	SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI1;
-	SYSCFG->EXTICR[0] |=  SYSCFG_EXTICR1_EXTI1_PB;
-	// interrupt mask register
-	EXTI->IMR1 |= EXTI_IMR1_IM1;
-	//rising edge trigger selection
-	EXTI->RTSR1 |= EXTI_RTSR1_RT1;
-	
-	//-----EXTI 2-----
-	// enable interrupt
-	NVIC_EnableIRQ(EXTI2_IRQn);
-	// connect External line to GPI
-	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
-	SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI2;
-	SYSCFG->EXTICR[0] |=  SYSCFG_EXTICR1_EXTI2_PB;
-	// interrupt mask register
-	EXTI->IMR1 |= EXTI_IMR1_IM2;
-	//rising edge trigger selection
-	EXTI->RTSR1 |= EXTI_RTSR1_RT2;
-	
-}
+
 /******************************************************************************
 systick interrupt pseudocode
 
@@ -97,78 +48,100 @@ mode:
 0=paused
 */
 
-void SysTick_Handler() {
-	if (mode) {
-		if (counts > 0) {
-			step_motor_counterclockwise(1);
-			counts -= 1;
-			// delay_ms(1);
-		}
-		else {
-			mode = 0;
-		}
-	}
-}
-/******************************************************************************
-exti interrupt pseudocode
-
-if (green button is pressed)
-	set the timer to counting mode
-else if (yellow button is pressed)
-	set the timer to paused mode
-else if (red button is pressed)
-	set timer to paused mode
-	reset the timer value
-	display zero time
-endif
-
-******************************************************************************/
-
-// EXTI 0 is the green button being pressed
-
-/* comment out the EXTI handlers
-void EXTI0_IRQHandler() {
-	delay_ms(1);
-	if ((EXTI->PR1 & EXTI_PR1_PIF0) != 0) {
-		// upon green button being pressed, make the state to counting mode
-		state = 1; // 1 is counting mode
-	
-			
-		// clear the interrupt
-		EXTI->PR1 |= EXTI_PR1_PIF0;
-	}
-}
-
-// EXTI 1 is the yellow button
-
-void EXTI1_IRQHandler() {
-	delay_ms(1);
-	if ((EXTI->PR1 & EXTI_PR1_PIF1) != 0) {
-		// upon the yellow button being pressed, make the state to paused mode
-		state = 0; // 0 is paused mode
-	
-			
-		// clear the interrupt
-		EXTI->PR1 |= EXTI_PR1_PIF1;
-	}
-}
-
-// EXTI 2 is the red button
-
-void EXTI2_IRQHandler() {
-	delay_ms(1);
-	if ((EXTI->PR1 & EXTI_PR1_PIF2) != 0) {
-		// upon the red button being pressed
-		// leave the state
-		// reset the time
-		
-		
-		// clear the interrupt
-		EXTI->PR1 |= EXTI_PR1_PIF2;
-	}
-}
+/*
+mode:
+0 = text display from uart
+1 = clock mode
 
 */
+
+
+
+void SysTick_Handler() {
+	if (mode == 1) {
+		// we are in clock mode, and count for 60 seconds
+		if (counts > 60) {
+			// do the action and reset counts
+			counts = 0; // reset counts
+			
+			// time_array = current_flaps
+			unsigned char time_array[6] = {0};
+			for (int i=0; i<6; i++) {
+				time_array[i] = current_flaps[i];
+			}
+			
+			// time_array++;
+			// time array should look something like 1248PM
+			increment_time(time_array);
+			
+			
+		}
+		else {
+			counts++;
+		}
+	}
+	else if (mode == 0) {
+		// we are in text display mode, we do not need interrupts in this mode
+		counts = 0; // just to reset it
+	}
+	
+	
+	
+}
+
+
+
+void increment_time(unsigned char current_time[6]) {
+	// increment minutes
+	current_time[3]++;
+	// handle carry for minutes ones place
+	if (current_time[3] > '9') {
+		current_time[3] = '0';
+		current_time[2]++;
+	}
+
+	// handle carry for minutes tens place
+	if (current_time[2] > '5') {
+		current_time[2] = '0';
+		// current_time[1]++; // increment hours 1's place
+		// handle carry for hours, need to handle
+		// 09 -> 10
+		// 12 -> 01
+		if (current_time[0] == '0' && current_time[1] == '9') {
+			// 09 -> 10
+			current_time[0] = '1';
+			current_time[1] = '0';
+		}
+		else if (current_time[0] == '1' && current_time[1] == '2') {
+			// 12 -> 01
+			current_time[0] = '0';
+			current_time[1] = '1';
+		}
+		else {
+			// we aren't in a special case, we just increment hours ones place
+			// before incrementing, we see if we are in hour 11. 11:59pm -> 12:00am
+			// this is the transition to and from am and pm
+			if (current_time[0] == '1' && current_time[1] == '1') {
+				// if in pm go to am
+				if (current_time[4] == 'P') {
+					current_time[4] = 'A';
+				}
+				// if in am go to pm
+				else if (current_time[4] == 'A') {
+					current_time[4] = 'P';
+				}
+			}
+			// then increment hours
+			current_time[1]++;
+		}
+	}
+}
+
+
+
+
+
+
 
 
 
