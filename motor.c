@@ -31,27 +31,16 @@ void init_motor() {
 
 
 
-void motor_reset() {
-	//code that might reset all of them
-	int reset_values[6] = {570, 570, 560, 550, 560, 560};
+void display_reset() {
+	//code that resets all the motors to blank
+	int reset_values[6] = {570, 510, 500, 600, 630, 540};
 	int motor_reset_values[6] = {0};
 	int magnet_detected[6] = {0};
 	int motor_completed_reset[6] = {0};
 
-	/*
+	
 	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
-		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
-	*/
-	
-		
-	while (!(motor_completed_reset[0] && motor_completed_reset[1])) {
-	
-	
-	/*
-	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
-		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
-	*/
-	
+		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {	
 		for (int motor_id = 0; motor_id < 6; motor_id++) { //go through each motor
 			if (!motor_completed_reset[motor_id]) {
 				if (get_hall_data(motor_id) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
@@ -67,10 +56,9 @@ void motor_reset() {
 					// once all motors have completed going to blank the while loop will stop
 				}
 			}
-			delay_us(600); // delay needed for reset sequence, can go down to like 180 with stuttering but still works
+			delay_us(220); // delay needed for reset sequence, can go down to like 180 with stuttering but still works
 		}
 	}
-
 }
 
 

@@ -67,9 +67,12 @@ int main(void){
 	#define DISPLAYING_SIZE 13
 	unsigned char displaying[DISPLAYING_SIZE] = "Displaying...";
 	
+	#define RESETTING_SIZE 12
+	unsigned char resetting[RESETTING_SIZE] = "Resetting...";
+	
 	// getting input from user strings
 	unsigned char temp_string[1] = {0};
-	unsigned char string_to_display[6] = {0};
+	unsigned char string_to_display[6] = {' ', ' ', ' ', ' ', ' ', ' '};
 	int string_to_display_IDX = 0;
 	
 	//to fix error of first 5 characters concatenated with last character in terminal
@@ -83,57 +86,10 @@ int main(void){
 	//display resetting while the flaps are initializing
 	uart_write(USART2, resetting, RESETTING_SIZE);
 	
-	
-	//*/
-
-	//code that might reset all of them
+	display_reset();
 
 	
-	int reset_values[6] = {570, 510, 500, 600, 630, 540};
-	int motor_reset_values[6] = {0};
-	int magnet_detected[6] = {0};
-	int motor_completed_reset[6] = {0};
-
 	
-	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
-		  && motor_completed_reset[3] && motor_completed_reset[4] && motor_completed_reset[5])) {
-	
-	
-		
-	//while (!(motor_completed_reset[0] && motor_completed_reset[1])) {
-	
-	
-	//while (!(motor_completed_reset[4])) {
-	
-	/*
-	while (!(motor_completed_reset[0] && motor_completed_reset[1] && motor_completed_reset[2] 
-		  && motor_completed_reset[3] && motor_completed_reset[4])) {
-	*/
-	
-		for (int motor_id = 0; motor_id < 6; motor_id++) { //go through each motor
-			if (!motor_completed_reset[motor_id]) {
-				if (get_hall_data(motor_id) && !magnet_detected[motor_id]) { //keep rotating until the magnet is detected
-					register_step_motor_once(motor_id);
-				}
-				else if (motor_reset_values[motor_id] < reset_values[motor_id]) { //move to blank
-					register_step_motor_once(motor_id);
-					magnet_detected[motor_id] = 1;
-					motor_reset_values[motor_id] += 1;
-				}
-				else if (motor_reset_values[motor_id] == reset_values[motor_id]) { //motor_id index in the reset position so set flag
-					motor_completed_reset[motor_id] = 1;
-					// once all motors have completed going to blank the while loop will stop
-				}
-			}
-			delay_us(220); // delay needed for reset sequence, can go down to like 180 with stuttering but still works
-		}
-	}
-	
-	
-	
-	// getting input from user strings
-	unsigned char temp_string[1] = {0};
-	unsigned char string_to_display[6] = {' ', ' ', ' ', ' ', ' ', ' '};
 	
 	// main while loop that asks for word, waits until it is displayed, then repeats
 	while(1) {
