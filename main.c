@@ -137,36 +137,82 @@ int main(void){
 		//ask for a word from user
 		uart_write(USART2, ask_for_word, ASK_MESSAGE_SIZE);
 		
-		// loop that reads character, puts it in display string, then displays to terminal
-		for (int i=0; i<6; i++) {
+		string_to_display_IDX = 0;
+		terminal_index = 0;
+		temp_string[0] = 0;
+		while(temp_string[0] != '\r') {
 			uart_read(USART2, temp_string, 1); //read from terminal
 			
-			char input_char = temp_string[0];
+			// handle backspacing (127 or DEL is what putty recognizes backspace as)
+			if (temp_string[0] == 127) {
+				
+				// keep index in array bounds
+				string_to_display_IDX -= 1;
+				if (string_to_display_IDX < 0) {
+					string_to_display_IDX = 0;
+				}
+				
+				//keeping track of the location on the terminal
+				terminal_index -= 1;
+				if (terminal_index < 0) {
+					terminal_index = 0;
+				}
+				
+				uart_write(USART2, temp_string, 1); //write backspace character to the terminal
+				
+			}
+			// put letters and spaces into string_to_display
+			else if ((temp_string[0] >= '0' && temp_string[0] <= '9') || (temp_string[0] >= 'A' && temp_string[0] <= 'Z') || (temp_string[0] >= 'a' && temp_string[0] <= 'z') || (temp_string[0] == ' ')) {
+				char input_char = temp_string[0];
 			
-			//bad input correction (need to add backspace/enter support later)
-			//lowercase to uppercase
-			if (input_char >= 'a' && input_char <= 'z') {
-				input_char -= 32; // Convert to uppercase
+				//bad input correction (need to add backspace/enter support later)
+				//lowercase to uppercase
+				if (input_char >= 'a' && input_char <= 'z') {
+					input_char -= 32; // Convert to uppercase
+				}
+				
+				//O to zero
+				if (input_char == 'O') {
+					input_char = '0'; //change any Os to 0s
+				}
+				
+				//put edited character into display string or display blank for invalid
+				if ((input_char >= '0' && input_char <= '9') || (input_char >= 'A' && input_char <= 'Z') || (input_char == ' ')) {
+					if (terminal_index == string_to_display_IDX) { //keeps the first 6 characters in the terminal display
+						string_to_display[string_to_display_IDX] = input_char;
+					}
+				}
+				else {
+					string_to_display[string_to_display_IDX] = ' ';
+				}
+				
+				//don't reset terminal index
+				terminal_index += 1;
+				
+				//increase string_to_display index and make sure it stays in bounds
+				string_to_display_IDX += 1;
+				if (string_to_display_IDX > 5) {
+					string_to_display_IDX = 5;
+				}
+				
+				uart_write(USART2, temp_string, 1); //write original terminal character to the terminal
 			}
 			
-			//O to zero
-			if (input_char == 'O') {
-				input_char = '0'; //change any Os to 0s
+			// fill rest of array with spaces when the enter key is pressed
+			else if (temp_string[0] == '\r') {
+				for (int i = string_to_display_IDX; i < 6; i++) {
+					if (string_to_display_IDX != 5) { // don't replace last character of array
+						string_to_display[i] = ' ';
+					}
+				}
 			}
 			
-			//put edited character into display string or display blank for invalid
-			if ((input_char >= '0' && input_char <= '9') || (input_char >= 'A' && input_char <= 'Z')) {
-        		string_to_display[i] = input_char;
-			} else {
-				string_to_display[i] = ' '; //invalid characters get blank
-			}
-			
-			uart_write(USART2, temp_string, 1); //write original terminal character to the terminal
 		}
 		
 		//tell user the displaying is happening
 		uart_write(USART2, clear, CLEAR_SIZE);
 		uart_write(USART2, displaying, DISPLAYING_SIZE);
+		uart_write(USART2, string_to_display, 6);
 		
 		//move to inputted string
 		move_to_flap(string_to_display);
