@@ -67,8 +67,13 @@ int main(void){
 	#define DISPLAYING_SIZE 13
 	unsigned char displaying[DISPLAYING_SIZE] = "Displaying...";
 	
-	#define RESETTING_SIZE 12
-	unsigned char resetting[RESETTING_SIZE] = "Resetting...";
+	// getting input from user strings
+	unsigned char temp_string[1] = {0};
+	unsigned char string_to_display[6] = {0};
+	int string_to_display_IDX = 0;
+	
+	//to fix error of first 5 characters concatenated with last character in terminal
+	int terminal_index = 0;
 	
 	
 	// reset the motors to blank
