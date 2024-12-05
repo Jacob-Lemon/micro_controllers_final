@@ -18,7 +18,8 @@ test
 
 ******************************************************************************/
 
-
+int mode_int = 0;
+int counts = 0;
 
 
 int main(void){
@@ -146,7 +147,6 @@ int main(void){
 	
 	
 	unsigned char mode_selection[1] = {0};
-	int mode_int = 0;
 	
 
 	// main while loop that asks for word, waits until it is displayed, then repeats
@@ -185,6 +185,20 @@ int main(void){
 				//must be specific number input                     prevents multiple number input
 				if (mode_selection[0] >= '1' && mode_selection[0] <= '4' && terminal_index == 0) {
 					mode_int = mode_selection[0] - '0'; //convert char number to int
+					
+					// this is the only place mode_int will change
+					if (mode_int == 2) {
+						// this marks the transition from one state to clock mode
+						// I may need to do mode_prev to keep track of an actual transition. maybe not though
+						// upon transition to clock mode
+						// reset counts, to make
+						counts = 0;
+						// make sure the string is in the right form!
+						
+						
+						
+					}
+					
 					uart_write(USART2, mode_selection, 1); //show the typed number
 					terminal_index += 1; //can only backspace when terminal index == 1
 				}
