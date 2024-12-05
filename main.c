@@ -120,7 +120,11 @@ int main(void){
 	unsigned char escape_message[] = 
     "Press the escape key at any time to go back to the menu\n\r\n";
 	
-	
+	//get clock format
+	#define CURRENT_TIME_SIZE 139
+	unsigned char current_time_message[] = 
+		"Enter the current time in the format 'HHMMPM', for example if it is currently 12:34PM, enter '1234PM', or if it is 2:30AM enter '0230AM'\n\r\n";
+
 	
 	// getting input from user strings
 	unsigned char temp_string[1] = {0};
@@ -139,8 +143,8 @@ int main(void){
 	uart_write(USART2, resetting, RESETTING_SIZE);
 	
 	
-	//delay_ms(1700); //simulated for unconnected
-	display_reset();
+	delay_ms(1700); //simulated for unconnected
+	//display_reset();
 	
 	
 	
@@ -155,12 +159,11 @@ int main(void){
 			//clear screen for showing ui
 			uart_write(USART2, clear, CLEAR_SIZE);
 			
-			temp_string[0] = 0; //reset for use in any state
-			
 			//show welcome message
 			uart_write(USART2, welcome_message, WELCOME_SIZE);
 			
 			//loop to handle user selection input and various bad user input possibilities
+			temp_string[0] = 0; //reset for use in any state
 			terminal_index = 0;
 			mode_selection[0] = 0;
 			while(mode_selection[0] != '\r') {
@@ -185,19 +188,6 @@ int main(void){
 				//must be specific number input                     prevents multiple number input
 				if (mode_selection[0] >= '1' && mode_selection[0] <= '4' && terminal_index == 0) {
 					mode_int = mode_selection[0] - '0'; //convert char number to int
-					
-					// this is the only place mode_int will change
-					if (mode_int == 2) {
-						// this marks the transition from one state to clock mode
-						// I may need to do mode_prev to keep track of an actual transition. maybe not though
-						// upon transition to clock mode
-						// reset counts, to make
-						counts = 0;
-						// make sure the string is in the right form!
-						
-						
-						
-					}
 					
 					uart_write(USART2, mode_selection, 1); //show the typed number
 					terminal_index += 1; //can only backspace when terminal index == 1
@@ -314,6 +304,112 @@ int main(void){
 			//show escape message at top
 			uart_write(USART2, escape_message, ESCAPE_MESSAGE_SIZE);
 			
+			// instructions for clock entry
+			uart_write(USART2, current_time_message, CURRENT_TIME_SIZE);
+			
+			//loop to handle user selection input and various bad user input possibilities
+			unsigned char clock_string_display[6] = {'1', '2', '3', '4', 'P', 'M'};
+			int clock_string_display_IDX = 0;
+			terminal_index = 0;
+			unsigned char clock_entry[1] = {0};
+			while(!(clock_entry[0] == '\r' && clock_string_display_IDX == 5)) {
+				uart_read(USART2, clock_entry, 1); //read from terminal
+				
+				// handle backspacing (127 (DEL) is what putty recognizes backspace as)
+				if (clock_entry[0] == 127) {
+					
+					//can only backspace if a number has been entered
+					if (terminal_index > 0) {
+						uart_write(USART2, clock_entry, 1); //write backspace character to the terminal
+					}
+					
+					
+					//don't let index go lower than needed
+					if (terminal_index <= 5) {
+						clock_string_display_IDX -= 1;
+					}
+					if (clock_string_display_IDX < 0) {
+						clock_string_display_IDX = 0;
+					}
+					
+					//don't let index go lower than needed
+					terminal_index -= 1;
+					if (terminal_index < 0) {
+						terminal_index = 0;
+					}
+				}
+				
+				//must be specific number input                            first UART input logic
+				if (clock_entry[0] >= '0' && clock_entry[0] <= '1' && clock_string_display_IDX == 0) {
+					clock_string_display[clock_string_display_IDX] = clock_entry[0];
+					uart_write(USART2, clock_entry, 1); //show the typed number
+					terminal_index += 1; //determine where in the UART terminal the user is
+					clock_string_display_IDX += 1;
+				}
+				//second UART input logic
+				else if (clock_string_display_IDX == 1) {
+					//if first one is a 0 then can enter 1 - 9 per clock logic
+					if (clock_entry[0] >= '1' && clock_entry[0] <= '9' && clock_string_display[0] == '0') {
+						clock_string_display[clock_string_display_IDX] = clock_entry[0];
+						uart_write(USART2, clock_entry, 1); //show the typed number
+						terminal_index += 1; //determine where in the UART terminal the user is
+						clock_string_display_IDX += 1;
+					}
+					//if first one is a 1 then can enter 0, 1, or 2 per clock logic
+					else if (clock_entry[0] >= '0' && clock_entry[0] <= '2' && clock_string_display[0] == '1') {
+						clock_string_display[clock_string_display_IDX] = clock_entry[0];
+						uart_write(USART2, clock_entry, 1); //show the typed number
+						terminal_index += 1; //determine where in the UART terminal the user is
+						clock_string_display_IDX += 1;
+					}
+				}
+				//third UART input logic
+				else if (clock_entry[0] >= '0' && clock_entry[0] <= '5' && clock_string_display_IDX == 2) {
+					clock_string_display[clock_string_display_IDX] = clock_entry[0];
+					uart_write(USART2, clock_entry, 1); //show the typed number
+					terminal_index += 1; //determine where in the UART terminal the user is
+					clock_string_display_IDX += 1;
+				}
+				//fourth UART input logic
+				else if (clock_entry[0] >= '0' && clock_entry[0] <= '9' && clock_string_display_IDX == 3) {
+					clock_string_display[clock_string_display_IDX] = clock_entry[0];
+					uart_write(USART2, clock_entry, 1); //show the typed number
+					terminal_index += 1; //determine where in the UART terminal the user is
+					clock_string_display_IDX += 1;
+				}
+				//fifth UART input logic
+				else if ((clock_entry[0] == 'P' || clock_entry[0] == 'A') && clock_string_display_IDX == 4) {
+					clock_string_display[clock_string_display_IDX] = clock_entry[0];
+					uart_write(USART2, clock_entry, 1); //show the typed number
+					terminal_index += 1; //determine where in the UART terminal the user is
+					clock_string_display_IDX += 1;
+				}
+				//sixth UART input logic
+				else if (clock_entry[0] == 'M' && clock_string_display_IDX == 5) {
+					clock_string_display[clock_string_display_IDX] = clock_entry[0];
+					uart_write(USART2, clock_entry, 1); //show the typed number
+					terminal_index += 1; //determine where in the UART terminal the user is
+				}
+				
+				
+			}
+			
+			//tell user the displaying is happening
+			uart_write(USART2, clear, CLEAR_SIZE);
+			uart_write(USART2, displaying, DISPLAYING_SIZE);
+			uart_write(USART2, clock_string_display, 6);
+			
+			move_to_flap(clock_string_display);
+			
+			//go to systick clock mode
+			mode_int = 5;
+		}
+		else if (mode_int == 5) {
+			uart_write(USART2, clear, CLEAR_SIZE);
+			
+			//show escape message at top
+			uart_write(USART2, escape_message, ESCAPE_MESSAGE_SIZE);
+			
 			unsigned char clock[5] = {'c', 'l', 'o', 'c', 'k'};
 			uart_write(USART2, clock, 5);
 			
@@ -330,8 +426,8 @@ int main(void){
 			//display resetting while the flaps are initializing
 			uart_write(USART2, resetting, RESETTING_SIZE);
 			
-			//delay_ms(1700); //uncomment when connected to hardware
-			display_reset();
+			delay_ms(1700); //uncomment when connected to hardware
+			//display_reset();
 			
 			mode_int = 0;
 		}
