@@ -58,7 +58,7 @@ mode:
 
 
 void SysTick_Handler() {
-	if (mode == 1) {
+	if (mode_int == 1) {
 		// we are in clock mode, and count for 60 seconds
 		if (counts > 60) {
 			// do the action and reset counts
@@ -73,6 +73,8 @@ void SysTick_Handler() {
 			// time_array++;
 			// time array should look something like 1248PM
 			increment_time(time_array);
+			// now, we must move to the updated time
+			move_to_flap(time_array);
 			
 			
 		}
@@ -80,7 +82,7 @@ void SysTick_Handler() {
 			counts++;
 		}
 	}
-	else if (mode == 0) {
+	else if (mode_int == 0) {
 		// we are in text display mode, we do not need interrupts in this mode
 		counts = 0; // just to reset it
 	}
