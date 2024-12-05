@@ -52,6 +52,8 @@ int main(void){
 	// initialize uart
 	init_uart();
 	
+	
+	
 	//for clearing terminal and going to top left
 	unsigned char clear[] = "\033[2Ja";
 	clear[5] = 12;
@@ -94,6 +96,7 @@ int main(void){
     "Enter your choice: ";
 	
 	
+	/*
 	//credits
 	#define CREDITS_MESSAGE_SIZE 612
 	unsigned char credits_message[] = 
@@ -106,8 +109,10 @@ int main(void){
     "|                     Completed Fall 2024                        |\n\r"
     "|                                                                |\n\r"
     "+----------------------------------------------------------------+\n\r";
-
+	*/
 	
+	#define CREDITS_MESSAGE_SIZE 2
+	unsigned char credits_message[] = "hi";
 	
 	//info for the user
 	#define ESCAPE_MESSAGE_SIZE 58
@@ -132,8 +137,11 @@ int main(void){
 	//display resetting while the flaps are initializing
 	uart_write(USART2, resetting, RESETTING_SIZE);
 	
-	delay_ms(1700); //simulated for unconnected
-	//display_reset();
+	
+	//delay_ms(1700); //simulated for unconnected
+	display_reset();
+	
+	
 	
 	
 	
@@ -193,7 +201,7 @@ int main(void){
 		}
 		else if (mode_int == 1) {
 			uart_write(USART2, clear, CLEAR_SIZE);
-			
+						
 			//show escape message at top
 			uart_write(USART2, escape_message, ESCAPE_MESSAGE_SIZE);
 			
@@ -308,8 +316,8 @@ int main(void){
 			//display resetting while the flaps are initializing
 			uart_write(USART2, resetting, RESETTING_SIZE);
 			
-			delay_ms(1700); //uncomment when connected to hardware
-			//display_reset();
+			//delay_ms(1700); //uncomment when connected to hardware
+			display_reset();
 			
 			mode_int = 0;
 		}
@@ -341,9 +349,9 @@ int main(void){
 		}
 	}
 
-
-	/*
 	
+	
+	/*
 	delay_ms(300);
 	unsigned char next[6] = {' ', ' ', ' ', ' ', ' ', ' '};
 	
@@ -382,9 +390,9 @@ int main(void){
 	next[5] = 'Y';
 
 	move_to_flap(next);
-
-
 	*/
+
+	
 	
 	
 	// delay_ms(300);

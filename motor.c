@@ -56,8 +56,13 @@ void display_reset() {
 					// once all motors have completed going to blank the while loop will stop
 				}
 			}
-			delay_us(220); // delay needed for reset sequence, can go down to like 180 with stuttering but still works
+			delay_us(240); // delay needed for reset sequence, can go down to like 180 with stuttering but still works
 		}
+	}
+			
+	//update current flaps 
+	for (int motor_id = 0; motor_id < 6; motor_id++) {
+			current_flaps[motor_id] = ' ';
 	}
 }
 
