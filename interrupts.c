@@ -60,7 +60,7 @@ mode:
 void SysTick_Handler() {
 	if (mode_int == 5) {
 		// we are in clock mode, and count for 60 seconds
-		if (counts > 60) {
+		if (counts > 10) {
 			// do the action and reset counts
 			counts = 0; // reset counts
 			

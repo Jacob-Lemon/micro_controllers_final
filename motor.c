@@ -33,7 +33,7 @@ void init_motor() {
 
 void display_reset() {
 	//code that resets all the motors to blank
-	int reset_values[6] = {570, 510, 500, 600, 630, 540};
+	int reset_values[6] = {570, 510, 500, 600, 600, 540};
 	int motor_reset_values[6] = {0};
 	int magnet_detected[6] = {0};
 	int motor_completed_reset[6] = {0};

@@ -45,6 +45,10 @@ int main(void){
 	
 	delay_ms(20);
 	
+	init_systick(16000000);
+	
+	delay_ms(20);
+	
 	
 	///*
 	
@@ -143,8 +147,8 @@ int main(void){
 	uart_write(USART2, resetting, RESETTING_SIZE);
 	
 	
-	delay_ms(1700); //simulated for unconnected
-	//display_reset();
+	//delay_ms(1700); //simulated for unconnected
+	display_reset();
 	
 	
 	
@@ -426,8 +430,8 @@ int main(void){
 			//display resetting while the flaps are initializing
 			uart_write(USART2, resetting, RESETTING_SIZE);
 			
-			delay_ms(1700); //uncomment when connected to hardware
-			//display_reset();
+			//delay_ms(1700); //uncomment when connected to hardware
+			display_reset();
 			
 			mode_int = 0;
 		}
