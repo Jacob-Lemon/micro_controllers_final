@@ -4,6 +4,7 @@
 #include "delay.h"
 #include "motor.h"
 #include "global_variables.h"
+#include "uart.h"
 
 
 #define SysTick_CTRL_CLKSOURCE 0x00000007
@@ -60,7 +61,7 @@ mode:
 void SysTick_Handler() {
 	if (mode_int == 5) {
 		// we are in clock mode, and count for 60 seconds
-		if (counts > 10) {
+		if (counts > 6003) {
 			// do the action and reset counts
 			counts = 0; // reset counts
 			
@@ -75,6 +76,10 @@ void SysTick_Handler() {
 			increment_time(time_array);
 			// now, we must move to the updated time
 			move_to_flap(time_array);
+
+			unsigned char back[] = "\b\b\b\b\b\b";
+			uart_write(USART2, back, 6);
+			uart_write(USART2, current_flaps, 6);
 			
 			
 		}

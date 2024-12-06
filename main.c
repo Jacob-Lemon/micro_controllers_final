@@ -45,22 +45,19 @@ int main(void){
 	
 	delay_ms(20);
 	
-	init_systick(16000000);
+	init_systick(160000);
 	
 	delay_ms(20);
 	
 	
-	///*
 	
 	//uart things
 	
 	// initialize uart
 	init_uart();
 	
-	
-	
 	//for clearing terminal and going to top left
-	unsigned char clear[] = "\033[2Ja";
+	unsigned char clear[] = "\033[2J ";
 	clear[5] = 12;
 	#define CLEAR_SIZE 7
 	
@@ -68,66 +65,63 @@ int main(void){
 	uart_write(USART2, clear, CLEAR_SIZE);
 
 	//message that asks user for a word
-	#define ASK_MESSAGE_SIZE 51
-	unsigned char ask_for_word[ASK_MESSAGE_SIZE] = "Enter in a 6 letter or less word and press enter:\n\r";
+	#define ASK_MESSAGE_SIZE 47
+	unsigned char ask_for_word[ASK_MESSAGE_SIZE] = "Enter a 6 letter or less word and press enter: ";
 	
 	// various messages
-	#define DISPLAYING_SIZE 13
-	unsigned char displaying[DISPLAYING_SIZE] = "Displaying...";
+	#define DISPLAYING_SIZE 12
+	unsigned char displaying[DISPLAYING_SIZE] = "Displaying: ";
 	
 	#define RESETTING_SIZE 12
 	unsigned char resetting[RESETTING_SIZE] = "Resetting...";
 	
 
 	// welcome ui message
-	#define WELCOME_SIZE 606
-	unsigned char welcome_message[] = 
-    "+------------------------------------------------+\n\r"
-    "|                                                |\n\r"
-    "|              SPLIT FLAP DISPLAY                |\n\r"
-    "|                                                |\n\r"
-    "+------------------------------------------------+\n\r"
+	#define WELCOME_SIZE 501
+	unsigned char welcome_message[WELCOME_SIZE] = 
+    "+---------------------------------+\n\r"
+    "|                                 |\n\r"
+    "|       SPLIT FLAP DISPLAY        |\n\r"
+    "|                                 |\n\r"
+    "+---------------------------------+\n\r"
     "\n\r"
     "Welcome to the Split Flap Display Interface!\n\r"
     "\n\r"
     "Please choose a mode:\n\r"
-    "+--------------------------------------+\n\r"
-    "| [1] Text Enter Mode                  |\n\r"
-    "| [2] Clock Mode                       |\n\r"
-    "| [3] Reset Split Flap Display         |\n\r"
-    "| [4] Credits                          |\n\r"
-    "+--------------------------------------+\n\r"
+    "+---------------------------------+\n\r"
+    "| [1] Text Enter Mode             |\n\r"
+    "| [2] Clock Mode                  |\n\r"
+    "| [3] Reset Split Flap Display    |\n\r"
+    "| [4] Credits                     |\n\r"
+    "+---------------------------------+\n\r"
     "\n\r"
     "Enter your choice: ";
 	
 	
-	/*
-	//credits
-	#define CREDITS_MESSAGE_SIZE 612
-	unsigned char credits_message[] = 
-    "+----------------------------------------------------------------+\n\r"
-    "|                                                                |\n\r"
-    "|                           CREDITS                              |\n\r"
-    "|                                                                |\n\r"
-    "|           Created by Easton McBeth and Jacob Lemon             |\n\r"
-    "|          For ECE 3710 Microcontrollers Final Project           |\n\r"
-    "|                     Completed Fall 2024                        |\n\r"
-    "|                                                                |\n\r"
-    "+----------------------------------------------------------------+\n\r";
-	*/
 	
-	#define CREDITS_MESSAGE_SIZE 2
-	unsigned char credits_message[] = "hi";
+	//credits
+	#define CREDITS_MESSAGE_SIZE 159
+	unsigned char credits_message[CREDITS_MESSAGE_SIZE] = 
+    "                    CREDITS\n\r\n"
+    "    Created by Easton McBeth and Jacob Lemon\n\r"
+    "   For ECE 3710 Microcontrollers Final Project\n\r"
+    "              Completed Fall 2024\n\r";
 	
 	//info for the user
-	#define ESCAPE_MESSAGE_SIZE 58
-	unsigned char escape_message[] = 
-    "Press the escape key at any time to go back to the menu\n\r\n";
+	#define ESCAPE_MESSAGE_SIZE 46
+	unsigned char escape_message[ESCAPE_MESSAGE_SIZE] = 
+    "Press the escape key to go back to the menu\n\r\n";
 	
 	//get clock format
-	#define CURRENT_TIME_SIZE 139
-	unsigned char current_time_message[] = 
-		"Enter the current time in the format 'HHMMPM', for example if it is currently 12:34PM, enter '1234PM', or if it is 2:30AM enter '0230AM'\n\r\n";
+	#define CURRENT_TIME_SIZE 147
+	unsigned char current_time_message[CURRENT_TIME_SIZE] = 
+		"Enter the current time in the format 'HHMMPM'\n\r"
+		"For example if it's 12:34PM, enter '1234PM', or if it's 2:30AM enter '0230AM'\n\r\n"
+		"Enter current time: ";
+	
+	#define DISPLAY_CURRENT_TIME_SIZE 24
+	unsigned char display_current_time_message[DISPLAY_CURRENT_TIME_SIZE] = 
+		"Current time displayed: ";
 
 	
 	// getting input from user strings
@@ -139,6 +133,9 @@ int main(void){
 	int terminal_index = 0;
 	
 
+	
+	
+	
 	//clear screen for resetting
 	uart_write(USART2, clear, CLEAR_SIZE);
 	
@@ -147,8 +144,8 @@ int main(void){
 	uart_write(USART2, resetting, RESETTING_SIZE);
 	
 	
-	//delay_ms(1700); //simulated for unconnected
-	display_reset();
+	delay_ms(1700); //simulated for unconnected
+	//display_reset();
 	
 	
 	
@@ -216,6 +213,11 @@ int main(void){
 			//ask for a word from user
 			uart_write(USART2, ask_for_word, ASK_MESSAGE_SIZE);
 			
+			//reset string to display array
+			for (int i = 0; i < 6; i++) {
+				string_to_display[i] = ' ';
+			}
+			//reset variables used 
 			string_to_display_IDX = 0;
 			terminal_index = 0;
 			temp_string[0] = 0;
@@ -232,9 +234,19 @@ int main(void){
 				if (temp_string[0] == 127) {
 					
 					// keep index in array bounds
-					string_to_display_IDX -= 1;
+					if (terminal_index <= 5) {
+						string_to_display_IDX -= 1;
+					}
+					//string_to_display_IDX -= 1;
 					if (string_to_display_IDX < 0) {
 						string_to_display_IDX = 0;
+					}
+					
+					string_to_display[string_to_display_IDX] = ' ';
+					
+					// prevent backspacing ui text
+					if (terminal_index > 0) {
+						uart_write(USART2, temp_string, 1); //write backspace character to the terminal
 					}
 					
 					//keeping track of the location on the terminal
@@ -243,14 +255,17 @@ int main(void){
 						terminal_index = 0;
 					}
 					
-					uart_write(USART2, temp_string, 1); //write backspace character to the terminal
+					
 					
 				}
 				// put letters and spaces into string_to_display
-				else if ((temp_string[0] >= '0' && temp_string[0] <= '9') || (temp_string[0] >= 'A' && temp_string[0] <= 'Z') || (temp_string[0] >= 'a' && temp_string[0] <= 'z') || (temp_string[0] == ' ')) {
+				else if ((temp_string[0] >= '0' && temp_string[0] <= '9') || 
+								 (temp_string[0] >= 'A' && temp_string[0] <= 'Z') || 
+								 (temp_string[0] >= 'a' && temp_string[0] <= 'z') || 
+							   (temp_string[0] == ' ')) {
+									 
 					char input_char = temp_string[0];
 				
-					//bad input correction (need to add backspace/enter support later)
 					//lowercase to uppercase
 					if (input_char >= 'a' && input_char <= 'z') {
 						input_char -= 32; // Convert to uppercase
@@ -262,45 +277,27 @@ int main(void){
 					}
 					
 					//put edited character into display string or display blank for invalid
-					if ((input_char >= '0' && input_char <= '9') || (input_char >= 'A' && input_char <= 'Z') || (input_char == ' ')) {
-						if (terminal_index == string_to_display_IDX) { //keeps the first 6 characters in the terminal display
-							string_to_display[string_to_display_IDX] = input_char;
+					if (((input_char >= '0' && input_char <= '9') || (input_char >= 'A' && input_char <= 'Z') || (input_char == ' ')) && (terminal_index <= 5)) {
+						string_to_display[string_to_display_IDX] = input_char;
+						uart_write(USART2, temp_string, 1);
+						terminal_index += 1;
+						if (string_to_display_IDX != 5) {
+							string_to_display_IDX += 1;
 						}
 					}
-					else {
-						string_to_display[string_to_display_IDX] = ' ';
-					}
-					
-					//don't reset terminal index
-					terminal_index += 1;
-					
-					//increase string_to_display index and make sure it stays in bounds
-					string_to_display_IDX += 1;
-					if (string_to_display_IDX > 5) {
-						string_to_display_IDX = 5;
-					}
-					
-					uart_write(USART2, temp_string, 1); //write original terminal character to the terminal
-				}
-				
-				// fill rest of array with spaces when the enter key is pressed
-				else if (temp_string[0] == '\r') {
-					for (int i = string_to_display_IDX; i < 6; i++) {
-						if (string_to_display_IDX != 5) { // don't replace last character of array
-							string_to_display[i] = ' ';
-						}
-					}
-				}
-							
+				}							
 			}
 			
-			//tell user the displaying is happening
-			uart_write(USART2, clear, CLEAR_SIZE);
-			uart_write(USART2, displaying, DISPLAYING_SIZE);
-			uart_write(USART2, string_to_display, 6);
-			
-			//move to inputted string
-			move_to_flap(string_to_display);
+			//don't move flaps if going back to welcome ui
+			if (mode_int != 0) {
+				//tell user the displaying is happening
+				uart_write(USART2, clear, CLEAR_SIZE);
+				uart_write(USART2, displaying, DISPLAYING_SIZE);
+				uart_write(USART2, string_to_display, 6);
+				
+				//move to inputted string
+				move_to_flap(string_to_display);
+			}
 		}
 		else if (mode_int == 2) {
 			uart_write(USART2, clear, CLEAR_SIZE);
@@ -319,6 +316,12 @@ int main(void){
 			while(!(clock_entry[0] == '\r' && clock_string_display_IDX == 5)) {
 				uart_read(USART2, clock_entry, 1); //read from terminal
 				
+				// escape character goes back to welcome ui
+				if (clock_entry[0] == 27) {
+					mode_int = 0;
+					break; //goes to while(1)
+				}
+				
 				// handle backspacing (127 (DEL) is what putty recognizes backspace as)
 				if (clock_entry[0] == 127) {
 					
@@ -328,7 +331,7 @@ int main(void){
 					}
 					
 					
-					//don't let index go lower than needed
+					//don't let index go lower than needed, and keep terminal index and string index in sync
 					if (terminal_index <= 5) {
 						clock_string_display_IDX -= 1;
 					}
@@ -382,14 +385,22 @@ int main(void){
 					clock_string_display_IDX += 1;
 				}
 				//fifth UART input logic
-				else if ((clock_entry[0] == 'P' || clock_entry[0] == 'A') && clock_string_display_IDX == 4) {
+				else if (((clock_entry[0] == 'P' || clock_entry[0] == 'p') || (clock_entry[0] == 'A' || clock_entry[0] == 'a')) && clock_string_display_IDX == 4) {
+					//lowercase to uppercase
+					if (clock_entry[0] == 'p' || clock_entry[0] == 'a') {
+						clock_entry[0] -= 32; // Convert to uppercase
+					}
 					clock_string_display[clock_string_display_IDX] = clock_entry[0];
 					uart_write(USART2, clock_entry, 1); //show the typed number
 					terminal_index += 1; //determine where in the UART terminal the user is
 					clock_string_display_IDX += 1;
 				}
 				//sixth UART input logic
-				else if (clock_entry[0] == 'M' && clock_string_display_IDX == 5) {
+				else if ((clock_entry[0] == 'M' || clock_entry[0] == 'm') && clock_string_display_IDX == 5) {
+					//lowercase to uppercase
+					if (clock_entry[0] == 'm') {
+						clock_entry[0] -= 32; // Convert to uppercase
+					}
 					clock_string_display[clock_string_display_IDX] = clock_entry[0];
 					uart_write(USART2, clock_entry, 1); //show the typed number
 					terminal_index += 1; //determine where in the UART terminal the user is
@@ -398,15 +409,18 @@ int main(void){
 				
 			}
 			
-			//tell user the displaying is happening
-			uart_write(USART2, clear, CLEAR_SIZE);
-			uart_write(USART2, displaying, DISPLAYING_SIZE);
-			uart_write(USART2, clock_string_display, 6);
-			
-			move_to_flap(clock_string_display);
-			
-			//go to systick clock mode
-			mode_int = 5;
+			//if mode_int is 0 then its going back to welcome ui
+			if (mode_int != 0) {
+				//tell user the displaying is happening
+				uart_write(USART2, clear, CLEAR_SIZE);
+				uart_write(USART2, displaying, DISPLAYING_SIZE);
+				uart_write(USART2, clock_string_display, 6);
+				
+				move_to_flap(clock_string_display);
+				
+				//go to systick clock mode
+				mode_int = 5;
+			}
 		}
 		else if (mode_int == 5) {
 			uart_write(USART2, clear, CLEAR_SIZE);
@@ -414,8 +428,11 @@ int main(void){
 			//show escape message at top
 			uart_write(USART2, escape_message, ESCAPE_MESSAGE_SIZE);
 			
-			unsigned char clock[5] = {'c', 'l', 'o', 'c', 'k'};
-			uart_write(USART2, clock, 5);
+			//show time in uart display as well
+			uart_write(USART2, display_current_time_message, DISPLAY_CURRENT_TIME_SIZE);
+			
+			//show curent time
+			uart_write(USART2, current_flaps, 6); 
 			
 			temp_string[0] = 0;
 			while (temp_string[0] != 27) {
@@ -430,8 +447,8 @@ int main(void){
 			//display resetting while the flaps are initializing
 			uart_write(USART2, resetting, RESETTING_SIZE);
 			
-			//delay_ms(1700); //uncomment when connected to hardware
-			display_reset();
+			delay_ms(1700); //uncomment when connected to hardware
+			//display_reset();
 			
 			mode_int = 0;
 		}
