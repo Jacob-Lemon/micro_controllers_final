@@ -1,13 +1,10 @@
 #include "shift.h"
 #include "gpio.h"
-
 #include "delay.h"
 #include "global_variables.h"
 
-#define steps_multiplier 57 // (10 / 0.087890625) / 2 = 56.88888889 for 10 degrees
 
-
-
+// setup the ports associated with the shift registers
 void init_shift_registers() {
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN; // enable GPIO clock B
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN; // enable GPIO clock C
@@ -26,21 +23,10 @@ void init_shift_registers() {
 	set_pin_mode(DATA_2_PORT, DATA_2_PIN, OUTPUT);
 	set_pin_mode(SHCP_2_PORT, SHCP_2_PIN, OUTPUT);
 	set_pin_mode(STCP_2_PORT, STCP_2_PIN, OUTPUT);
-	
-
-
 }
 
-/******************************************************************************
-register_step_motor will cause the motor of the motor_id to step once.
 
-
-I am envisioning a nibble the corresponds to each motor. We then take that
-nibble, shift just it, and concatenate it with the other thing.
-This
-
-
-******************************************************************************/
+//takes in a motor id and steps it one time based on its current orientation
 void register_step_motor_once(int motor_id) {  //do we need the step level? maybe for more precision?
 	// increase motor_id orientation
 	unsigned char data_to_register = 0;
@@ -134,46 +120,7 @@ void register_step_motor_once(int motor_id) {  //do we need the step level? mayb
 			register_put_serial_data(2, data_to_register);
 		} break;
 	} // end switch
-	//delay_us(15);
-} // end register_step_motor_once
-
-//steps meaning a full step in this function, might not be able to use this
-void register_step_motor_multiple(int motor_id, int steps) {
-	for (int i = 0; i < steps; i++) {
-		register_step_motor_once(motor_id);
-	}
 }
-
-// motor id is 0 - 5
-// void register_move_motor_ten_degrees(int motor_id) {
-// 	int steps = 
-// 	//assign steps to move here
-
-// 	switch (motor_id) {
-// 		case 0: {
-					
-// 		} break;
-		
-// 		case 1: {
-			
-// 		} break;
-		
-// 		case 2: {
-			
-// 		} break;
-// 		case 3: {
-			
-// 		} break;
-		
-// 		case 4: {
-			
-// 		} break;
-		
-// 		case 5: {
-			
-// 		} break;
-// 	} // end switch
-// }
 
 
 
@@ -196,12 +143,10 @@ quality assurance testing:
 	exactly as we want with no bugs. This is a perfect function. Programmers
 	dream of writing functions as perfect as this.
 ******************************************************************************/
-#define wait_us 15 // 4 is about as fast as it can work. It is 5 for safety
 void register_put_serial_data(int register_id, unsigned char data) {
 	for (int i=0; i<8; i++) {
 		// get the current bit we want to serial output
 		int serial_bit = (data >> (7 - i)) & 1;
-		
 		
 		// assign serial output
 		switch (register_id) {
@@ -226,14 +171,12 @@ void register_put_serial_data(int register_id, unsigned char data) {
 				digital_write(SHCP_2_PORT, SHCP_2_PIN, 1); 					// shift clock goes high
 			} break;
 		} // end switch
-		
-		// delay_us(10);
-		
-	} // end loop
+
+
+	}
 	// now, the shift register has the right data,
 	// so we enable the storage clock to set the output
 	
-	// delay_us(300);
 	// trigger positive edge of STCP
 	switch (register_id) {
 		case 0: {
@@ -252,33 +195,3 @@ void register_put_serial_data(int register_id, unsigned char data) {
 		} break;
 	} // end switch
 }
-
-
-/*
-single shift register specs
-needs power and ground
-inputs:
-	serial data input
-	shift register clock
-	storage register clock
-	output enable - doesn't need a pin, just goes straight to ground
-	
-outputs:
-	8 parallel data bits
-	
-usage for our purposes
-output enable will be held to a constant logic zero
-	this will mean that output is updated and instantly pushed out upon positive edge of STCP (storage register clock)
-	
-0100_0100
-0010_0010
-
-*/
-
-
-
-
-
-
-
-

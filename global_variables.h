@@ -2,8 +2,6 @@
 #define GLOBAL_VARIABLES_H
 
 
-
-
 /*
 state orientation of each motor (whether it is facing A, B, A', or B')
 	motor_orientation_0
@@ -15,13 +13,6 @@ state orientation of each motor (whether it is facing A, B, A', or B')
 what each motor is currently displaying
 */
 extern unsigned char current_flaps[6]; //changed to be an array for better looking code
-
-
-
-
-
-
-
 
 
 
@@ -40,11 +31,6 @@ extern int motor_orientation_2;
 extern int motor_orientation_3;
 extern int motor_orientation_4;
 extern int motor_orientation_5;
-
-
-
-
-
 
 
 

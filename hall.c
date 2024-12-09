@@ -4,8 +4,8 @@
 
 
 void init_hall_effect_sensors() {
+
 	// init the hall effect sensors 0-5, input and pullup mode
-	
 	set_pin_mode(HALL_0_PORT, HALL_0_PIN, INPUT);
 	set_pull_up_down(HALL_0_PORT, HALL_0_PIN, 1);
 	
@@ -52,7 +52,7 @@ int get_hall_data(int hall_id) {
 		
 	} // end switch
 	
-	// else, there is some grave error, this should never happen
+	// else, there is some error, this should never happen
 	return 0;
 	
 }

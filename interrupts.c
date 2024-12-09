@@ -1,5 +1,4 @@
 #include "interrupts.h"
-
 #include "stm32l476xx.h"
 #include "delay.h"
 #include "motor.h"
@@ -8,12 +7,10 @@
 
 
 #define SysTick_CTRL_CLKSOURCE 0x00000007
-//#define SysTick_CTRL_TICKINT 0x00000007
-//#define SysTick_CTRL_ENABLE 1
 
 
 void init_systick(int ticks) {
-	SysTick->CTRL = 0; 					// disable systick
+	SysTick->CTRL = 0; 			// disable systick
 	SysTick->LOAD = ticks - 1; 	// Set reload register
 	
 	
@@ -55,9 +52,6 @@ mode:
 1 = clock mode
 
 */
-
-
-
 void SysTick_Handler() {
 	if (mode_int == 5) {
 		// we are in clock mode, and count for 60 seconds
@@ -77,9 +71,10 @@ void SysTick_Handler() {
 			// now, we must move to the updated time
 			move_to_flap(time_array);
 
-			unsigned char back[] = "\b\b\b\b\b\b";
+			//display the time to uart as well
+			unsigned char back[] = "\b\b\b\b\b\b"; // delete current string there
 			uart_write(USART2, back, 6);
-			uart_write(USART2, current_flaps, 6);
+			uart_write(USART2, current_flaps, 6); // write current time to uart
 			
 			
 		}

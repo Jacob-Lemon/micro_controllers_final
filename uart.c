@@ -2,7 +2,7 @@
 #include "stm32l476xx.h"
 
 /*
-uart specs
+UART specifications
 USART2 is connected to the ST_LINK USB interface via PA2 and PA3
 
 configure USART2 to:
@@ -99,11 +99,7 @@ void init_uart() {
 
 	// verify that uart is ready for reception
 	// REACK: Receive Enable ACKnowledge flag. Set by hardware
-	while ((USART2->ISR & USART_ISR_REACK) == 0);
-	
-	
-
-	// now it should be all good to go
+	while ((USART2->ISR & USART_ISR_REACK) == 0);	
 }
 
 

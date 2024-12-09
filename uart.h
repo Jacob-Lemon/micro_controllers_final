@@ -11,11 +11,8 @@ void uart_read(USART_TypeDef *USARTx, uint8_t *buffer, int nBytes);
 
 void uart_write(USART_TypeDef *USARTx, uint8_t *buffer, int nBytes);
 
-void init_adc();
-
-
 /*
-Create a uart_read and uart_write functions based on 
+Create uart_read and uart_write functions based on 
 book page 536 of the textbook
 */
 

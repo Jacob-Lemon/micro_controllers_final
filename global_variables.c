@@ -1,10 +1,7 @@
 #include "global_variables.h"
 
 
-
-
 unsigned char current_flaps[6] = {' ', ' ', ' ', ' ', ' ', ' '}; //changed to be an array for better looking code
-
 
 
 

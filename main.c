@@ -9,34 +9,27 @@
 #include "hall.h"
 #include "interrupts.h"
 
-/******************************************************************************
-main.c
-on register ids:
-	an int. 0,1,2
 
-test
-
-******************************************************************************/
 
 int mode_int = 0;
 int counts = 0;
 
 
-int main(void){
-	// set the clock to HSI, 16MHz, doesn't do anything
-	//RCC->CR |= RCC_CR_HSION; // set the clock control register to have the HSI on bit enabled
-	//while((RCC->CR & RCC_CR_HSIRDY) == 0); // loop until the HSI clock is ready
-	
+int main(void) {
+
 	// enable GPIO clocks
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN; // enable GPIO clock A
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN; // enable GPIO clock B
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN; // enable GPIO clock C
+
+
 	// initializations
-	// init_uart();
-	// init_adc();
-	
-	// init_motor();
-	
+	delay_ms(20);
+
+	init_uart();
+
+	delay_ms(20);
+		
 	init_hall_effect_sensors();
 	
 	delay_ms(20);
@@ -51,10 +44,7 @@ int main(void){
 	
 	
 	
-	//uart things
-	
-	// initialize uart
-	init_uart();
+	//UART Messages
 	
 	//for clearing terminal and going to top left
 	unsigned char clear[] = "\033[2J ";
@@ -98,8 +88,7 @@ int main(void){
     "Enter your choice: ";
 	
 	
-	
-	//credits
+	//credits message
 	#define CREDITS_MESSAGE_SIZE 159
 	unsigned char credits_message[CREDITS_MESSAGE_SIZE] = 
     "                    CREDITS\n\r\n"
@@ -119,11 +108,17 @@ int main(void){
 		"For example if it's 12:34PM, enter '1234PM', or if it's 2:30AM enter '0230AM'\n\r\n"
 		"Enter current time: ";
 	
+	//current time message
 	#define DISPLAY_CURRENT_TIME_SIZE 24
 	unsigned char display_current_time_message[DISPLAY_CURRENT_TIME_SIZE] = 
 		"Current time displayed: ";
-
 	
+
+
+
+
+
+
 	// getting input from user strings
 	unsigned char temp_string[1] = {0};
 	unsigned char string_to_display[6] = {' ', ' ', ' ', ' ', ' ', ' '};
@@ -139,24 +134,27 @@ int main(void){
 	//clear screen for resetting
 	uart_write(USART2, clear, CLEAR_SIZE);
 	
-	
 	//display resetting while the flaps are initializing
 	uart_write(USART2, resetting, RESETTING_SIZE);
 	
-	
-	delay_ms(1700); //simulated for unconnected
-	//display_reset();
-	
+	//delay_ms(1700); //simulated for unconnected
+	display_reset();
 	
 	
 	
 	
+	
+	//to store the users mode selection
 	unsigned char mode_selection[1] = {0};
 	
 
-	// main while loop that asks for word, waits until it is displayed, then repeats
+	// main while loop that switches between different display modes
 	while(1) {
+
+
+		// mode for showing the ui message
 		if (mode_int == 0) {
+			
 			//clear screen for showing ui
 			uart_write(USART2, clear, CLEAR_SIZE);
 			
@@ -202,8 +200,10 @@ int main(void){
 				
 			}
 			
-			//delay_ms(1300);
 		}
+
+
+		// mode for getting words from the user
 		else if (mode_int == 1) {
 			uart_write(USART2, clear, CLEAR_SIZE);
 						
@@ -253,9 +253,7 @@ int main(void){
 					terminal_index -= 1;
 					if (terminal_index < 0) {
 						terminal_index = 0;
-					}
-					
-					
+					}					
 					
 				}
 				// put letters and spaces into string_to_display
@@ -299,6 +297,10 @@ int main(void){
 				move_to_flap(string_to_display);
 			}
 		}
+
+
+
+		// mode for getting clock mode ready
 		else if (mode_int == 2) {
 			uart_write(USART2, clear, CLEAR_SIZE);
 			
@@ -422,6 +424,9 @@ int main(void){
 				mode_int = 5;
 			}
 		}
+
+
+		// mode for clock mode
 		else if (mode_int == 5) {
 			uart_write(USART2, clear, CLEAR_SIZE);
 			
@@ -440,6 +445,9 @@ int main(void){
 			}
 			mode_int = 0;
 		}
+
+
+		// mode for resetting flaps to blank
 		else if (mode_int == 3) {
 			//clear screen for resetting
 			uart_write(USART2, clear, CLEAR_SIZE);
@@ -447,11 +455,14 @@ int main(void){
 			//display resetting while the flaps are initializing
 			uart_write(USART2, resetting, RESETTING_SIZE);
 			
-			delay_ms(1700); //uncomment when connected to hardware
-			//display_reset();
+			//delay_ms(1700); //uncomment when connected to hardware
+			display_reset();
 			
 			mode_int = 0;
 		}
+
+
+		// mode for displaying simple credits
 		else if (mode_int == 4) {
 			//clear screen
 			uart_write(USART2, clear, CLEAR_SIZE);
@@ -462,12 +473,25 @@ int main(void){
 			//show credits
 			uart_write(USART2, credits_message, CREDITS_MESSAGE_SIZE);
 			
+			unsigned char easton[] = "EAST0N";
+			unsigned char and_message[] = "AND   ";
+			unsigned char jacob[] = "JAC0B ";
+			
+			move_to_flap(easton);
+			delay_ms(1000);
+			move_to_flap(and_message);
+			delay_ms(1000);
+			move_to_flap(jacob);
+			
 			temp_string[0] = 0;
 			while (temp_string[0] != 27) {
 				uart_read(USART2, temp_string, 1); //read from terminal
 			}
 			mode_int = 0;
 		}
+
+		
+		// if mode_int gets off somehow
 		else {
 			uart_write(USART2, clear, CLEAR_SIZE);
 			

@@ -2,6 +2,7 @@
 #define GPIO_H
 
 #include "stm32l476xx.h"
+
 //---------- Macros for use with the GPIO pins ----------
 // these should be up to data with the easy wiring
 // DATA0 - PB12
@@ -66,9 +67,8 @@
 #define HALL_5_PORT GPIOA
 #define HALL_5_PIN  8
 
-
-
 //----- end macros for use with GPIO pins
+
 
 
 
@@ -92,5 +92,7 @@ void set_output_type(GPIO_TypeDef *port, int pin, int type);
 void set_pull_up_down(GPIO_TypeDef *port, int pin, int pupd);
 void digital_write(GPIO_TypeDef *port, int pin, int value);
 int digital_read(GPIO_TypeDef *port, int pin);
+
+
 
 #endif // GPIO_H

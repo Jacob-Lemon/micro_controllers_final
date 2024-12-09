@@ -1,6 +1,6 @@
 #include "gpio.h"
 #include "stm32l476xx.h"
-// #include "global_variables.h"
+
 
 /******************************************************************************
 set_pin_mode will set the mode for a GPIO pin, like PA12.
@@ -19,6 +19,7 @@ void set_pin_mode(GPIO_TypeDef *port, int pin, int mode) {
     port->MODER |= (mode << (pin * 2));  // Set the mode for the pin
 }
 
+
 /******************************************************************************
 set_output_type sets the output type for a GPIO pin.
 inputs:
@@ -35,6 +36,7 @@ void set_output_type(GPIO_TypeDef *port, int pin, int type) {
     port->OTYPER |= (type << pin); // Set the type for the pin
 }
 
+
 /******************************************************************************
 set_pull_up_down sets the pull-up or pull-down resistor for a GPIO pin.
 inputs:
@@ -50,6 +52,7 @@ void set_pull_up_down(GPIO_TypeDef *port, int pin, int pupd) {
     port->PUPDR &= ~(0b11 << (pin * 2)); // Clear the 2 bits for the pin
     port->PUPDR |= (pupd << (pin * 2));  // Set the pull-up/pull-down configuration
 }
+
 
 /******************************************************************************
 digital_write sets the output state of a GPIO pin.
@@ -69,6 +72,7 @@ void digital_write(GPIO_TypeDef *port, int pin, int value) {
         port->ODR &= ~(1 << pin); // Clear the pin
     }
 }
+
 
 /******************************************************************************
 digital_read reads the input state of a GPIO pin.
